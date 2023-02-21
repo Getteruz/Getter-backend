@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import configuration from './config';
+import { PositionModule } from './modules/position/position.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import configuration from './config';
       useFactory: (configService: ConfigService) =>
         configService.get('database'),
       inject: [ConfigService],
-    })
+    }),
+    PositionModule,
   ],
 })
 export class AppModule {}
