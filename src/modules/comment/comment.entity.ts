@@ -7,6 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Article } from '../article/article.entity';
+import { User } from '../user/user.entity';
 
 @Entity({ name: 'comment' })
 export class Comment extends BaseEntity {
@@ -19,4 +20,8 @@ export class Comment extends BaseEntity {
   @ManyToOne(() => Article, (article) => article.comments)
   @JoinColumn()
   article: Article;
+
+  @ManyToOne(() => User, (user) => user.comments)
+  @JoinColumn()
+  user: User;
 }

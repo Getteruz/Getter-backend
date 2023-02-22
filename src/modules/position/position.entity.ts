@@ -5,6 +5,7 @@ import {
   BaseEntity,
   OneToMany,
 } from 'typeorm';
+import { User } from '../user/user.entity';
 
 @Entity({ name: 'position' })
 export class Position extends BaseEntity {
@@ -16,4 +17,7 @@ export class Position extends BaseEntity {
     name: 'title',
   })
   title: string;
+
+  @OneToMany(() => User, (user) => user.position)
+  users: User;
 }
