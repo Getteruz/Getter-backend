@@ -5,6 +5,7 @@ import {
   BaseEntity,
   OneToMany,
 } from 'typeorm';
+import { Article } from '../article/article.entity';
 
 @Entity({ name: 'category' })
 export class Category extends BaseEntity {
@@ -13,4 +14,7 @@ export class Category extends BaseEntity {
 
   @Column()
   title: string;
+
+  @OneToMany(() => Article, (article) => article.category)
+  articles: Article[];
 }

@@ -4,8 +4,12 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Category } from '../category/category.entity';
 import { Comment } from '../comment/comment.entity';
+import { User } from '../user/user.entity';
 
 @Entity({ name: 'article' })
 export class Article extends BaseEntity {
@@ -29,4 +33,12 @@ export class Article extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.article)
   comments: Comment[];
+
+  @ManyToOne(() => Category, (category) => category.articles)
+  @JoinColumn()
+  category: Category;
+
+  @ManyToOne(() => User, (user) => user.articles)
+  @JoinColumn()
+  user: User;
 }

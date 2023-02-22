@@ -34,6 +34,14 @@ class UpdateArticleDto {
   @IsOptional()
   @IsString()
   readonly file: Express.Multer.File;
+
+  @ApiProperty({
+    description: `Category шв`,
+    example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
+  })
+  @IsOptional()
+  @IsString()
+  readonly category: string;
 }
 
 export default UpdateArticleDto;
