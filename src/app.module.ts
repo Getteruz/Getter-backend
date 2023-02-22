@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import configuration from './config';
 import { ArticleModule } from './modules/article/article.module';
+import { CategoryModule } from './modules/category/category.module';
 import { PositionModule } from './modules/position/position.module';
 import { UserModule } from './modules/user/user.module';
 import { WebsiteModule } from './modules/website/website.module';
@@ -25,6 +26,7 @@ import { WebsiteModule } from './modules/website/website.module';
     UserModule,
     WebsiteModule,
     ArticleModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}
