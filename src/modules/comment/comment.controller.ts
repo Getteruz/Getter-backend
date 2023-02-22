@@ -19,83 +19,83 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
-import { CreateCategory, UpdateCategory } from './dto';
-import { CategoryService } from './category.service';
+import { CreateCommentDto, UpdateCommentDto } from './dto';
+import { CommentService } from './comment.service';
 
-@ApiTags('Category')
-@Controller('categories')
-export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+@ApiTags('Comment')
+@Controller('comment')
+export class CommentController {
+  constructor(private readonly commentService: CommentService) {}
 
   @Get('/:id')
-  @ApiOperation({ summary: 'Method: returns category by id' })
+  @ApiOperation({ summary: 'Method: returns comment by id' })
   @ApiOkResponse({
-    description: 'The category was returned successfully',
+    description: 'The comment was returned successfully',
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async getById(@Param('id') id: string) {
-    return this.categoryService.getById(id);
+    return this.commentService.getById(id);
   }
 
   @Get('/')
-  @ApiOperation({ summary: 'Method: returns all categories' })
+  @ApiOperation({ summary: 'Method: returns all comments' })
   @ApiOkResponse({
-    description: 'The categories were returned successfully',
+    description: 'The comments were returned successfully',
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async getData() {
     try {
-      return await this.categoryService.getAll();
+      return await this.commentService.getAll();
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Post('/')
-  @ApiOperation({ summary: 'Method: creates new category' })
+  @ApiOperation({ summary: 'Method: creates new comment' })
   @ApiCreatedResponse({
-    description: 'The category was created successfully',
+    description: 'The comment was created successfully',
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() categoryData: CreateCategory) {
+  async create(@Body() categoryData: CreateCommentDto) {
     try {
-      return await this.categoryService.create(categoryData);
+      return await this.commentService.create(categoryData);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Put('/:id')
-  @ApiOperation({ summary: 'Method: updating category' })
+  @ApiOperation({ summary: 'Method: updating comment' })
   @ApiOkResponse({
-    description: 'Category was changed',
+    description: 'Comment was changed',
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async changeData(
-    @Body() userData: UpdateCategory,
+    @Body() userData: UpdateCommentDto,
     @Param('id') id: string,
   ): Promise<UpdateResult> {
     try {
-      return await this.categoryService.update(userData, id);
+      return await this.commentService.update(userData, id);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Delete('/:id')
-  @ApiOperation({ summary: 'Method: deleting category' })
+  @ApiOperation({ summary: 'Method: deleting comment' })
   @ApiOkResponse({
-    description: 'Category was deleted',
+    description: 'Comment was deleted',
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string) {
     try {
-      return await this.categoryService.delete(id);
+      return await this.commentService.delete(id);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  OneToMany,
+} from 'typeorm';
+import { Comment } from '../comment/comment.entity';
 
 @Entity({ name: 'article' })
 export class Article extends BaseEntity {
@@ -19,4 +26,7 @@ export class Article extends BaseEntity {
 
   @Column('text', { array: true })
   tags: string[];
+
+  @OneToMany(() => Comment, (comment) => comment.article)
+  comments: Comment[];
 }
