@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import configuration from './config';
 import { PositionModule } from './modules/position/position.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PositionModule } from './modules/position/position.module';
       inject: [ConfigService],
     }),
     PositionModule,
+    UserModule,
   ],
 })
 export class AppModule {}
