@@ -27,10 +27,10 @@ export class UsersRepository {
       .getOne();
   }
 
-  async getByUsername(username: string): Promise<any> {
+  async getByEmail(email: string): Promise<User> {
     return this.usersRepository
       .createQueryBuilder()
-      .where('username = :username', { username })
+      .where('email = :email', { email })
       .getOne();
   }
 

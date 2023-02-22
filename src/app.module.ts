@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import configuration from './config';
 import { ArticleModule } from './modules/article/article.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { CategoryModule } from './modules/category/category.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { PositionModule } from './modules/position/position.module';
@@ -23,12 +24,13 @@ import { WebsiteModule } from './modules/website/website.module';
         configService.get('database'),
       inject: [ConfigService],
     }),
-    PositionModule,
-    UserModule,
-    WebsiteModule,
+    AuthModule,
     ArticleModule,
     CategoryModule,
     CommentModule,
+    PositionModule,
+    UserModule,
+    WebsiteModule,
   ],
 })
 export class AppModule {}
