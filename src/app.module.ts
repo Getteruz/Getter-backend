@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import configuration from './config';
+import { ArticleModule } from './modules/article/article.module';
 import { PositionModule } from './modules/position/position.module';
 import { UserModule } from './modules/user/user.module';
 import { WebsiteModule } from './modules/website/website.module';
@@ -23,6 +24,7 @@ import { WebsiteModule } from './modules/website/website.module';
     PositionModule,
     UserModule,
     WebsiteModule,
+    ArticleModule,
   ],
 })
 export class AppModule {}
