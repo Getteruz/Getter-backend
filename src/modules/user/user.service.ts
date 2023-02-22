@@ -11,12 +11,13 @@ import { ConfigService } from '@nestjs/config';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersRepository } from './user.repository';
 import { User } from './user.entity';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly config: ConfigService,
+    private readonly mailService: MailService,
     private readonly connection: DataSource,
   ) {}
 
@@ -71,6 +72,7 @@ export class UsersService {
       await this.connection.transaction(async (manager: EntityManager) => {
         await manager.save(user);
       });
+      await this.mailService.register({ ...user, password: userData.password,id:user.id });
 
       const newUser = await this.usersRepository.getById(user.id);
       return newUser;

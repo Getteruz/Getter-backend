@@ -7,6 +7,7 @@ import { ArticleModule } from './modules/article/article.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoryModule } from './modules/category/category.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { MailModule } from './modules/mail/mail.module';
 import { PositionModule } from './modules/position/position.module';
 import { UserModule } from './modules/user/user.module';
 import { WebsiteModule } from './modules/website/website.module';
@@ -28,6 +29,7 @@ import { WebsiteModule } from './modules/website/website.module';
     ArticleModule,
     CategoryModule,
     CommentModule,
+    MailModule,
     PositionModule,
     UserModule,
     WebsiteModule,
