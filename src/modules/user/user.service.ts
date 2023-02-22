@@ -12,7 +12,6 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersRepository } from './user.repository';
 import { User } from './user.entity';
 
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -42,12 +41,12 @@ export class UsersService {
     return user;
   }
 
-  async getByUsername(username: string): Promise<User> {
-    const user = await this.usersRepository.getByUsername(username);
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  async getByEmail(email: string): Promise<User> {
+    const user = await this.usersRepository.getByEmail(email);
+    if (user) {
+      return user;
     }
-    return user;
+    throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
   }
 
   async deleteOne(id: string) {
