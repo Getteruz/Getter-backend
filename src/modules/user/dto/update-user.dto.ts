@@ -1,9 +1,4 @@
-import {
-  IsString,
-  MaxLength,
-  IsEmail,
-  IsOptional,
-} from 'class-validator';
+import { IsString, MaxLength, IsEmail, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 class UpdateUserDto {
@@ -32,6 +27,16 @@ class UpdateUserDto {
   @IsOptional()
   @IsString()
   readonly phone: string;
+
+  @ApiProperty({
+    description: `Article image`,
+    example: 'file',
+    type: 'string',
+    format: 'binary',
+  })
+  @IsOptional()
+  @IsString()
+  readonly file: Express.Multer.File;
 }
 
 export default UpdateUserDto;

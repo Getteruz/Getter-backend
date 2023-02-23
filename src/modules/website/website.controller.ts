@@ -57,7 +57,7 @@ export class WebsiteController {
     description: 'The website was created successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async saveData(@Body() data: CreateWebsiteDto): Promise<InsertResult> {
+  async saveData(@Body() data: CreateWebsiteDto): Promise<Website> {
     try {
       return await this.websiteService.create(data);
     } catch (err) {

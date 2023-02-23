@@ -24,6 +24,12 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
+import {
+  FileUploadValidationForCreate,
+  FileUploadValidationForUpdate,
+} from '../../infra/validators';
+import { MulterStorage } from '../../infra/helpers';
+
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { User } from './user.entity';
 import { UsersService } from './user.service';
@@ -65,10 +71,14 @@ export class UsersController {
     description: 'The user was created successfully',
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: MulterStorage('uploads/user'),
+    }),
+  )
   @HttpCode(HttpStatus.CREATED)
   async register(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
     @Body() userData: CreateUserDto,
   ): Promise<User> {
     try {
@@ -84,10 +94,14 @@ export class UsersController {
     description: 'User was changed',
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: MulterStorage('uploads/user'),
+    }),
+  )
   @HttpCode(HttpStatus.OK)
   async changeData(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() userData: UpdateUserDto,
     @Param('id') id: string,
   ): Promise<UpdateResult | User> {

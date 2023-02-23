@@ -8,7 +8,12 @@ import { CreateUserDto } from '../user/dto';
 export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
-  async register(body: CreateUserDto & { password: string; id: string }) {
+  async register(body: {
+    password: string;
+    id: string;
+    name: string;
+    email: string;
+  }) {
     await this.mailerService
       .sendMail({
         to: body.email,

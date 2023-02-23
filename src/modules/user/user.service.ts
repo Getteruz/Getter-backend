@@ -1,17 +1,12 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { DataSource, EntityManager } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
 
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersRepository } from './user.repository';
 import { User } from './user.entity';
 import { MailService } from '../mail/mail.service';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +14,7 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
     private readonly mailService: MailService,
     private readonly connection: DataSource,
+    private readonly fileService: FileService,
   ) {}
 
   async getById(id: string): Promise<User> {
@@ -51,13 +47,18 @@ export class UsersService {
   }
 
   async deleteOne(id: string) {
+    await this.deleteImage(id);
     const response = await this.usersRepository.remove(id);
     return response;
   }
 
   async change(value: UpdateUserDto, id: string, file: Express.Multer.File) {
     const response = await this.usersRepository.update(id, value);
-    return response;
+    if (file) {
+      return await this.updateImage(file, id);
+    } else {
+      return response;
+    }
   }
 
   async create(userData: CreateUserDto, file: Express.Multer.File) {
@@ -68,11 +69,19 @@ export class UsersService {
       user.email = userData.email;
       user.phone = userData.phone;
 
+      if (file) {
+        const avatar = await this.uploadImage(file);
+        user.avatar = avatar;
+      }
+
       await user.hashPassword(userData.password);
       await this.connection.transaction(async (manager: EntityManager) => {
         await manager.save(user);
       });
-      await this.mailService.register({ ...user, password: userData.password,id:user.id });
+      await this.mailService.register({
+        ...user,
+        password: userData.password,
+      });
 
       const newUser = await this.usersRepository.getById(user.id);
       return newUser;
@@ -82,5 +91,27 @@ export class UsersService {
       }
       throw err;
     }
+  }
+
+  async uploadImage(file: Express.Multer.File) {
+    const avatar = await this.fileService.uploadFile(file);
+    return avatar;
+  }
+
+  async updateImage(file: Express.Multer.File, id: string) {
+    const data = await this.getOne(id);
+    const avatar = await this.fileService.updateFile(data.avatar.id, file);
+    data.avatar = avatar;
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(data);
+    });
+
+    return data;
+  }
+
+  async deleteImage(id: string) {
+    const data = await this.getOne(id);
+    const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
   }
 }
