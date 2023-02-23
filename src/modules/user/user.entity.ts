@@ -36,6 +36,9 @@ export class User extends BaseEntity {
   @Column()
   phone: string;
 
+  @Column({ default: false })
+  isEmailValid: boolean;
+
   @ManyToOne(() => Position, (position) => position.users, {
     onDelete: 'SET NULL',
   })

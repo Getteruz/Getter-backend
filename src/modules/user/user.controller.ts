@@ -126,4 +126,13 @@ export class UsersController {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @Post('/email/:id')
+  async verifyEmail(@Param('id') id: string) {
+    try {
+      return await this.usersService.setTrueEmail(id);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

@@ -114,4 +114,12 @@ export class UsersService {
     const data = await this.getOne(id);
     const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
   }
+
+  async setTrueEmail(id) {
+    const user = await this.getOne(id);
+    user.isEmailValid = true;
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(user);
+    });
+  }
 }
