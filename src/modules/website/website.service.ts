@@ -1,11 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { DataSource, EntityManager } from 'typeorm';
+import { FileService } from '../file/file.service';
 
 import { UpdateWebsiteDto, CreateWebsiteDto } from './dto';
 import { WebsiteRepository } from './website.repository';
 
 @Injectable()
 export class WebsiteService {
-  constructor(private readonly websiteRepository: WebsiteRepository) {}
+  constructor(
+    private readonly websiteRepository: WebsiteRepository,
+    private readonly fileService: FileService,
+    private readonly connection: DataSource,
+  ) {}
 
   async getAll() {
     const [data, count] = await this.websiteRepository.getAll();
@@ -21,6 +27,7 @@ export class WebsiteService {
   }
 
   async deleteOne(id: string) {
+    await this.deleteImage(id);
     const response = await this.websiteRepository.remove(id);
     return response;
   }
@@ -32,6 +39,24 @@ export class WebsiteService {
 
   async create(value: CreateWebsiteDto) {
     const response = await this.websiteRepository.create(value);
-    return response;
+    const id = response.raw[0].id;
+    return await this.uploadScreenShotImage(value.link, value.title, id);
+  }
+
+  async uploadScreenShotImage(link: string, title: string, id: string) {
+    const avatar = await this.fileService.uploadScreenshotWebsite(link, title);
+    const data = await this.getOne(id);
+    data.avatar = avatar;
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(data);
+    });
+
+    return data;
+  }
+
+  async deleteImage(id: string) {
+    const data = await this.getOne(id);
+    const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
   }
 }

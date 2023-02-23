@@ -36,6 +36,16 @@ class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   readonly phone: string;
+
+  @ApiProperty({
+    description: `Article image`,
+    example: 'file',
+    type: 'string',
+    format: 'binary',
+  })
+  @IsNotEmpty()
+  @IsString()
+  readonly file: Express.Multer.File;
 }
 
 export default CreateUserDto;

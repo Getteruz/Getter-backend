@@ -9,7 +9,10 @@ import {
   Patch,
   Param,
   Get,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import {
   ApiCreatedResponse,
@@ -22,6 +25,11 @@ import {
 import { CreateArticleDto, UpdateArticleDto } from './dto';
 import { Article } from './article.entity';
 import { ArticleService } from './article.service';
+import { MulterStorage } from '../../infra/helpers';
+import {
+  FileUploadValidationForCreate,
+  FileUploadValidationForUpdate,
+} from '../../infra/validators';
 
 @ApiTags('Article')
 @Controller('article')
@@ -58,27 +66,42 @@ export class ArticleController {
   @ApiCreatedResponse({
     description: 'The article was created successfully',
   })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: MulterStorage('uploads/article'),
+    }),
+  )
   @HttpCode(HttpStatus.CREATED)
-  async saveData(@Body() data: CreateArticleDto): Promise<InsertResult> {
+  async saveData(
+    @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
+    @Body() data: CreateArticleDto,
+  ): Promise<InsertResult | Article> {
     try {
-      return await this.articleService.create(data);
+      return await this.articleService.create(data, file);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Patch('/:id')
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: updating article' })
   @ApiOkResponse({
     description: 'Article was changed',
   })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: MulterStorage('uploads/article'),
+    }),
+  )
   @HttpCode(HttpStatus.OK)
   async changeData(
+    @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() data: UpdateArticleDto,
     @Param('id') id: string,
-  ): Promise<UpdateResult> {
+  ): Promise<UpdateResult | Article> {
     try {
-      return await this.articleService.change(data, id);
+      return await this.articleService.change(data, id, file);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -6,9 +6,11 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Category } from '../category/category.entity';
 import { Comment } from '../comment/comment.entity';
+import { FileEntity } from '../file/file.entity';
 import { User } from '../user/user.entity';
 
 @Entity({ name: 'article' })
@@ -41,4 +43,8 @@ export class Article extends BaseEntity {
   @ManyToOne(() => User, (user) => user.articles)
   @JoinColumn()
   user: User;
+
+  @OneToOne(() => FileEntity, (file) => file.article)
+  @JoinColumn()
+  avatar: FileEntity;
 }

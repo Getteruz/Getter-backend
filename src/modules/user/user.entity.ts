@@ -6,6 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
@@ -13,6 +14,7 @@ import { UserRole } from '../../infra/shared/types';
 import { Position } from '../position/position.entity';
 import { Article } from '../article/article.entity';
 import { Comment } from '../comment/comment.entity';
+import { FileEntity } from '../file/file.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -34,6 +36,9 @@ export class User extends BaseEntity {
   @Column()
   phone: string;
 
+  @Column({ default: false })
+  isEmailValid: boolean;
+
   @ManyToOne(() => Position, (position) => position.users, {
     onDelete: 'SET NULL',
   })
@@ -45,6 +50,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToOne(() => FileEntity, (file) => file.user)
+  @JoinColumn()
+  avatar: FileEntity;
 
   public async hashPassword(password: string): Promise<void> {
     this.password = await bcrypt.hash(password, 10);
