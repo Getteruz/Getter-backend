@@ -7,6 +7,7 @@ import { UsersRepository } from './user.repository';
 import { User } from './user.entity';
 import { MailService } from '../mail/mail.service';
 import { FileService } from '../file/file.service';
+import { PositionService } from '../position/position.service';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,7 @@ export class UsersService {
     private readonly mailService: MailService,
     private readonly connection: DataSource,
     private readonly fileService: FileService,
+    private readonly positionService: PositionService,
   ) {}
 
   async getById(id: string): Promise<User> {
@@ -69,19 +71,19 @@ export class UsersService {
       user.email = userData.email;
       user.phone = userData.phone;
 
-      if (file) {
-        const avatar = await this.uploadImage(file);
-        user.avatar = avatar;
-      }
+      const avatar = await this.uploadImage(file);
+      user.avatar = avatar;
+      const position = await this.positionService.getOne(userData.position);
+      user.position = position;
 
       await user.hashPassword(userData.password);
       await this.connection.transaction(async (manager: EntityManager) => {
         await manager.save(user);
       });
-      await this.mailService.register({
-        ...user,
-        password: userData.password,
-      });
+      // await this.mailService.register({
+      //   ...user,
+      //   password: userData.password,
+      // });
 
       const newUser = await this.usersRepository.getById(user.id);
       return newUser;

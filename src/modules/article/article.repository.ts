@@ -13,13 +13,19 @@ export class ArticleRepository {
   ) {}
 
   async getAll() {
-    return this.articleRepository.createQueryBuilder().getManyAndCount();
+    return this.articleRepository
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.comments', 'comment')
+      .leftJoinAndSelect('article.user', 'user')
+      .getManyAndCount();
   }
 
   async getById(id: string): Promise<Article> {
     return this.articleRepository
-      .createQueryBuilder()
-      .where('id = :id', { id })
+      .createQueryBuilder('article')
+      .where('article.id = :id', { id })
+      .leftJoinAndSelect('article.comments', 'comment')
+      .leftJoinAndSelect('comment.user', 'user')
       .getOne();
   }
 

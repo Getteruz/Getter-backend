@@ -1,5 +1,15 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString, isArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { BadRequestException } from '@nestjs/common';
+
+function parseTextToArray(name: string, value?: string) {
+  const arr = value ? JSON.parse(value) : '';
+  if (!isArray(arr)) {
+    throw new BadRequestException(`${name} should be array.`);
+  }
+  return arr;
+}
 class UpdateArticleDto {
   @ApiProperty({
     description: `title`,
@@ -23,6 +33,7 @@ class UpdateArticleDto {
   })
   @IsOptional()
   @IsArray()
+  @Transform(({ value }: { value: string }) => parseTextToArray('tags', value))
   readonly tags: string[];
 
   @ApiProperty({
@@ -32,16 +43,23 @@ class UpdateArticleDto {
     format: 'binary',
   })
   @IsOptional()
-  @IsString()
   readonly file: Express.Multer.File;
 
   @ApiProperty({
-    description: `Category шв`,
+    description: `Category ID`,
     example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
   })
   @IsOptional()
   @IsString()
   readonly category: string;
+
+  @ApiProperty({
+    description: `Category ID`,
+    example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
+  })
+  @IsOptional()
+  @IsString()
+  readonly user: string;
 }
 
 export default UpdateArticleDto;

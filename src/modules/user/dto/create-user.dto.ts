@@ -38,13 +38,20 @@ class CreateUserDto {
   readonly phone: string;
 
   @ApiProperty({
+    description: `Position id`,
+    example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
+  })
+  @IsNotEmpty()
+  @IsString()
+  readonly position: string;
+
+  @ApiProperty({
     description: `Article image`,
     example: 'file',
     type: 'string',
     format: 'binary',
   })
-  @IsNotEmpty()
-  @IsString()
+  //@IsNotEmpty()
   readonly file: Express.Multer.File;
 }
 

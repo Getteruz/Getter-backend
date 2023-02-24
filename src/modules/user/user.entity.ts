@@ -51,7 +51,9 @@ export class User extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
-  @OneToOne(() => FileEntity, (file) => file.user)
+  @OneToOne(() => FileEntity, (file) => file.user, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn()
   avatar: FileEntity;
 
