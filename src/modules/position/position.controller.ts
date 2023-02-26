@@ -21,6 +21,9 @@ import {
 import { CreatePositionDto, UpdatePositionDto } from './dto';
 import { Position } from './position.entity';
 import { PositionService } from './position.service';
+import { Query } from '@nestjs/common/decorators/http/route-params.decorator';
+import { PaginationDto } from '../../infra/shared/dto';
+import { Route } from '../../infra/shared/decorators/route.decorator';
 
 @ApiTags('Position')
 @Controller('position')
@@ -33,9 +36,9 @@ export class PositionController {
     description: 'The positions were returned successfully',
   })
   @HttpCode(HttpStatus.OK)
-  async getData(): Promise<{ items: Position[]; totalItemsCount: number }> {
+  async getData(@Route() route: string, @Query() query: PaginationDto) {
     try {
-      return await this.positionService.getAll();
+      return await this.positionService.getAll({ ...query, route });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -57,9 +60,7 @@ export class PositionController {
     description: 'The position was created successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async saveData(
-    @Body() positionData: CreatePositionDto,
-  ): Promise<InsertResult> {
+  async saveData(@Body() positionData: CreatePositionDto): Promise<Position> {
     try {
       return await this.positionService.create(positionData);
     } catch (err) {
@@ -90,7 +91,7 @@ export class PositionController {
     description: 'Position was deleted',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteData(@Param('id') id: string): Promise<DeleteResult> {
+  async deleteData(@Param('id') id: string) {
     try {
       return await this.positionService.deleteOne(id);
     } catch (err) {

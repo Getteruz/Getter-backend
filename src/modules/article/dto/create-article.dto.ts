@@ -4,8 +4,6 @@ import { Transform } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
 
 function parseTextToArray(name: string, value?: string) {
-  console.log(value);
-
   const arr = value ? JSON.parse(value) : '';
   if (!isArray(arr)) {
     throw new BadRequestException(`${name} should be array.`);
