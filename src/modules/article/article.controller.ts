@@ -30,6 +30,9 @@ import {
   FileUploadValidationForCreate,
   FileUploadValidationForUpdate,
 } from '../../infra/validators';
+import { Route } from '../../infra/shared/decorators/route.decorator';
+import { Query } from '@nestjs/common/decorators';
+import { PaginationDto } from '../../infra/shared/dto';
 
 @ApiTags('Article')
 @Controller('article')
@@ -42,9 +45,9 @@ export class ArticleController {
     description: 'The articles were returned successfully',
   })
   @HttpCode(HttpStatus.OK)
-  async getData(): Promise<{ items: Article[]; totalItemsCount: number }> {
+  async getData(@Route() route: string, @Query() query: PaginationDto) {
     try {
-      return await this.articleService.getAll();
+      return await this.articleService.getAll({ ...query, route });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
