@@ -19,8 +19,11 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
-import { CreateCategory, UpdateCategory } from './dto';
+import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 import { CategoryService } from './category.service';
+import { Route } from '../../infra/shared/decorators/route.decorator';
+import { Query } from '@nestjs/common/decorators';
+import { PaginationDto } from '../../infra/shared/dto';
 
 @ApiTags('Category')
 @Controller('categories')
@@ -45,9 +48,9 @@ export class CategoryController {
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
-  async getData() {
+  async getData(@Route() route: string, @Query() query: PaginationDto) {
     try {
-      return await this.categoryService.getAll();
+      return await this.categoryService.getAll({ ...query, route });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -60,7 +63,7 @@ export class CategoryController {
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() categoryData: CreateCategory) {
+  async create(@Body() categoryData: CreateCategoryDto) {
     try {
       return await this.categoryService.create(categoryData);
     } catch (err) {
@@ -76,7 +79,7 @@ export class CategoryController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async changeData(
-    @Body() userData: UpdateCategory,
+    @Body() userData: UpdateCategoryDto,
     @Param('id') id: string,
   ): Promise<UpdateResult> {
     try {

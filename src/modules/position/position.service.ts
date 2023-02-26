@@ -46,6 +46,7 @@ export class PositionService {
 
   async deleteOne(id: string) {
     const response = await this.positionRepository.delete(id);
+    return response;
   }
 
   async change(value: UpdatePositionDto, id: string) {

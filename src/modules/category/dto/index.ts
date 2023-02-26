@@ -1,2 +1,2 @@
-export { default as CreateCategory } from './create-category.dto';
-export { default as UpdateCategory } from './update-category.dto';
+export { default as CreateCategoryDto } from './create-category.dto';
+export { default as UpdateCategoryDto } from './update-category.dto';

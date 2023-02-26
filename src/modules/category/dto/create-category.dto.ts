@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-class CreateCategory {
+class CreateCategoryDto {
   @ApiProperty({
     description: 'Title',
     example: 'Backend developer',
@@ -11,4 +11,4 @@ class CreateCategory {
   readonly title: string;
 }
 
-export default CreateCategory;
+export default CreateCategoryDto;
