@@ -24,6 +24,9 @@ export class UsersRepository {
     return this.usersRepository
       .createQueryBuilder('user')
       .where('user.id = :id', { id })
+      .leftJoinAndSelect('user.position', 'position')
+      .leftJoinAndSelect('user.articles', 'article')
+      .leftJoinAndSelect('user.avatar', 'file')
       .getOne();
   }
 

@@ -2,8 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import * as path from 'path';
 
-import { CreateUserDto } from '../user/dto';
-
 @Injectable()
 export class MailService {
   constructor(private readonly mailerService: MailerService) {}

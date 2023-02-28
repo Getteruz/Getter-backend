@@ -29,6 +29,14 @@ class UpdateUserDto {
   readonly phone: string;
 
   @ApiProperty({
+    description: `Position id`,
+    example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
+  })
+  @IsOptional()
+  @IsString()
+  readonly position: string;
+
+  @ApiProperty({
     description: `Article image`,
     example: 'file',
     type: 'string',
