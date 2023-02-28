@@ -30,13 +30,21 @@ export class FileService {
 
   async removeFile(id: string) {
     const file = await this.fileRepository.getById(id);
-    await this.deleteFileWithFs(file.path);
+    try{
+      await this.deleteFileWithFs(file.path);
+    }catch(err){
+      console.log(err);
+    }
     await this.fileRepository.remove(id);
   }
 
   async updateFile(id: string, file) {
     const changedFile = await this.fileRepository.getById(id);
-    await this.deleteFileWithFs(changedFile.path);
+    try{
+      await this.deleteFileWithFs(file.path);
+    }catch(err){
+      console.log(err);
+    }
 
     const url = 'http://localhost:4000/' + file.path.split('uploads\\')[1];
     const path = file.path;

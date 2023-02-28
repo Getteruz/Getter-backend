@@ -25,7 +25,12 @@ export class Website extends BaseEntity {
   @Column()
   link: string;
 
-  @OneToOne(() => FileEntity, (file) => file.website)
+  @Column({ default: false })
+  isActive: boolean;
+
+  @OneToOne(() => FileEntity, (file) => file.website, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn()
   avatar: FileEntity;
 }
