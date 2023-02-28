@@ -17,11 +17,15 @@ export class Comment extends BaseEntity {
   @Column()
   text: string;
 
-  @ManyToOne(() => Article, (article) => article.comments)
+  @ManyToOne(() => Article, (article) => article.comments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   article: Article;
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 }

@@ -22,6 +22,7 @@ import {
   ApiOkResponse,
   ApiTags,
   ApiOperation,
+  ApiConsumes,
 } from '@nestjs/swagger';
 
 import {
@@ -66,6 +67,7 @@ export class UsersController {
   }
 
   @Post('/')
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: creates new user' })
   @ApiCreatedResponse({
     description: 'The user was created successfully',

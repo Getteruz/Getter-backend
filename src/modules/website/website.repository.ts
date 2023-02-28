@@ -13,13 +13,17 @@ export class WebsiteRepository {
   ) {}
 
   async getAll() {
-    return this.websiteRepository.createQueryBuilder().getManyAndCount();
+    return this.websiteRepository
+      .createQueryBuilder('website')
+      .leftJoinAndSelect('website.avatar', 'file')
+      .getManyAndCount();
   }
 
   async getById(id: string): Promise<Website> {
     return this.websiteRepository
-      .createQueryBuilder()
-      .where('id = :id', { id })
+      .createQueryBuilder('website')
+      .where('website.id = :id', { id })
+      .leftJoinAndSelect('website.avatar', 'file')
       .getOne();
   }
 

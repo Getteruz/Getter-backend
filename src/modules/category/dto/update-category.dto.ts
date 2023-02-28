@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-class UpdateCategory {
+class UpdateCategoryDto {
   @ApiProperty({
     description: 'Title',
     example: 'Backend developer',
@@ -11,4 +11,4 @@ class UpdateCategory {
   readonly title: string;
 }
 
-export default UpdateCategory;
+export default UpdateCategoryDto;

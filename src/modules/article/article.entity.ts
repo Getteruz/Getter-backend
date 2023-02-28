@@ -33,6 +33,9 @@ export class Article extends BaseEntity {
   @Column('text', { array: true })
   tags: string[];
 
+  @Column({ default: 0 })
+  commentCount: number;
+
   @OneToMany(() => Comment, (comment) => comment.article)
   comments: Comment[];
 
@@ -44,7 +47,9 @@ export class Article extends BaseEntity {
   @JoinColumn()
   user: User;
 
-  @OneToOne(() => FileEntity, (file) => file.article)
+  @OneToOne(() => FileEntity, (file) => file.article, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn()
   avatar: FileEntity;
 }

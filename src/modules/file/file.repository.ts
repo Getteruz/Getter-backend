@@ -13,8 +13,9 @@ export class FileRepository {
 
   async getById(id: string): Promise<FileEntity> {
     return this.fileRepository
-      .createQueryBuilder()
-      .where('id = :id', { id })
+      .createQueryBuilder('comment')
+      .where('comment.id = :id', { id })
+      .leftJoinAndSelect('comment.user', 'user')
       .getOne();
   }
 

@@ -1,5 +1,16 @@
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, isArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { BadRequestException } from '@nestjs/common';
+
+function parseTextToArray(name: string, value?: string) {
+  const arr = value ? JSON.parse(value) : '';
+  if (!isArray(arr)) {
+    throw new BadRequestException(`${name} should be array.`);
+  }
+  return arr;
+}
+
 class CreateArticleDto {
   @ApiProperty({
     description: `title`,
@@ -23,6 +34,7 @@ class CreateArticleDto {
   })
   @IsNotEmpty()
   @IsArray()
+  @Transform(({ value }: { value: string }) => parseTextToArray('tags', value))
   readonly tags: string[];
 
   @ApiProperty({
@@ -31,17 +43,23 @@ class CreateArticleDto {
     type: 'string',
     format: 'binary',
   })
-  @IsNotEmpty()
-  @IsString()
   readonly file: Express.Multer.File;
 
   @ApiProperty({
-    description: `Category шв`,
+    description: `Category ID`,
     example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
   })
   @IsNotEmpty()
   @IsString()
   readonly category: string;
+
+  @ApiProperty({
+    description: `User ID`,
+    example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
+  })
+  @IsNotEmpty()
+  @IsString()
+  readonly user: string;
 }
 
 export default CreateArticleDto;

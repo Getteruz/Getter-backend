@@ -1,36 +1,62 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { CreateCommentDto, UpdateCommentDto } from './dto';
 import { CommentRepository } from './comment.repository';
+import { Comment } from './comment.entity';
 
 @Injectable()
 export class CommentService {
-  constructor(private readonly commentRepository: CommentRepository) {}
+  constructor(
+    @InjectRepository(Comment)
+    private readonly commentRepository: CommentRepository,
+  ) {}
 
   async getAll() {
-    const categories = await this.commentRepository.getAll();
-    return categories;
+    return this.commentRepository.find({
+      relations: {
+        user: true,
+        article: true,
+      },
+    });
   }
 
   async getById(id: string) {
-    const data = await this.commentRepository.getById(id);
-    if (!data) {
-      throw new HttpException('Category not Found', HttpStatus.NOT_FOUND);
+    const comment = await this.commentRepository.findOne({
+      relations: {
+        user: true,
+        article: true,
+      },
+      where: { id },
+    });
+
+    if (!comment) {
+      throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
     }
-    return data;
+
+    return comment;
   }
 
   async delete(id: string) {
-    const response = await this.commentRepository.remove(id);
+    const response = await this.commentRepository.delete(id);
     return response;
   }
 
   async update(value: UpdateCommentDto, id: string) {
-    const response = await this.commentRepository.update(value, id);
+    const response = await this.commentRepository.update({ id }, value);
     return response;
   }
 
-  async create(value: CreateCommentDto) {
-    const response = await this.commentRepository.create(value);
+  async create(values: CreateCommentDto) {
+    const response = await this.commentRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Comment)
+      .values(values as unknown as Comment)
+      .returning('id')
+      .execute();
+
     return response;
   }
 }

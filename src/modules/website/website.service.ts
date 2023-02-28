@@ -55,6 +55,18 @@ export class WebsiteService {
     return data;
   }
 
+  async updateImage(file: Express.Multer.File, id: string) {
+    const data = await this.getOne(id);
+    const avatar = await this.fileService.updateFile(data.avatar.id, file);
+    data.avatar = avatar;
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(data);
+    });
+
+    return data;
+  }
+
   async deleteImage(id: string) {
     const data = await this.getOne(id);
     const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
