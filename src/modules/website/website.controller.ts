@@ -9,18 +9,27 @@ import {
   Patch,
   Param,
   Get,
+  Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
   ApiOperation,
+  ApiConsumes,
 } from '@nestjs/swagger';
 
 import { CreateWebsiteDto, UpdateWebsiteDto } from './dto';
 import { Website } from './website.entity';
 import { WebsiteService } from './website.service';
+import { Route } from '../../infra/shared/decorators/route.decorator';
+import { PaginationDto } from '../../infra/shared/dto';
+import { MulterStorage } from '../../infra/helpers';
+import { FileUploadValidationForUpdate } from '../../infra/validators';
 
 @ApiTags('Website')
 @Controller('website')
@@ -33,9 +42,9 @@ export class WebsiteController {
     description: 'The websites were returned successfully',
   })
   @HttpCode(HttpStatus.OK)
-  async getData(): Promise<{ items: Website[]; totalItemsCount: number }> {
+  async getData(@Route() route: string, @Query() query: PaginationDto) {
     try {
-      return await this.websiteService.getAll();
+      return await this.websiteService.getAll({ ...query, route });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -66,17 +75,24 @@ export class WebsiteController {
   }
 
   @Patch('/:id')
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: updating website' })
   @ApiOkResponse({
     description: 'Website was changed',
   })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: MulterStorage('uploads/website'),
+    }),
+  )
   @HttpCode(HttpStatus.OK)
   async changeData(
+    @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() data: UpdateWebsiteDto,
     @Param('id') id: string,
-  ): Promise<UpdateResult> {
+  ): Promise<UpdateResult | Website> {
     try {
-      return await this.websiteService.change(data, id);
+      return await this.websiteService.change(data, id, file);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
