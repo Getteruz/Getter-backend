@@ -32,6 +32,7 @@ class UpdatePortfolioDto {
     type: 'string',
     format: 'binary',
   })
+  @IsOptional()
   readonly file: Express.Multer.File;
 }
 

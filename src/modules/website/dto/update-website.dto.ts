@@ -24,6 +24,15 @@ class UpdateWebsiteDto {
   @IsOptional()
   @IsString()
   readonly link: string;
+
+  @ApiProperty({
+    description: `Portfolio image`,
+    example: 'file',
+    type: 'string',
+    format: 'binary',
+  })
+  @IsOptional()
+  readonly file: Express.Multer.File;
 }
 
 export default UpdateWebsiteDto;
