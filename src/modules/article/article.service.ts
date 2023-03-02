@@ -8,10 +8,11 @@ import { FindOptionsWhere } from 'typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { UpdateArticleDto, CreateArticleDto } from './dto';
+import { UpdateArticleDto, CreateArticleDto, LikeDto } from './dto';
 import { ArticleRepository } from './article.repository';
 import { FileService } from '../file/file.service';
 import { Article } from './article.entity';
+import { UsersService } from '../user/user.service';
 
 @Injectable()
 export class ArticleService {
@@ -20,6 +21,7 @@ export class ArticleService {
     private readonly articleRepository: ArticleRepository,
     private readonly fileService: FileService,
     private readonly connection: DataSource,
+    private readonly userService: UsersService,
   ) {}
 
   async getAll(
@@ -45,6 +47,7 @@ export class ArticleService {
           user: true,
         },
         avatar: true,
+        likes: true,
       },
       where: { id },
     });
@@ -97,6 +100,31 @@ export class ArticleService {
     } else {
       return response;
     }
+  }
+
+  async addLikeToArticle(values: LikeDto) {
+    const article = await this.getOne(values.articleId);
+    const user = await this.userService.getById(values.userId);
+
+    article.likes = article.likes || [];
+    article.likes.push(user);
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(article);
+    });
+    return article;
+  }
+
+  async removeLikeFromArticle(values: LikeDto) {
+    const article = await this.getOne(values.articleId);
+
+    article.likes = article.likes || [];
+    article.likes = article.likes.filter((u) => u.id != values.userId);
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(article);
+    });
+    return article;
   }
 
   async uploadImage(file: Express.Multer.File, id: string) {

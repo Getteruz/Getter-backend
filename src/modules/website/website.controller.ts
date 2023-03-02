@@ -23,7 +23,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 
-import { CreateWebsiteDto, UpdateWebsiteDto } from './dto';
+import { CreateWebsiteDto, LikeDto, UpdateWebsiteDto } from './dto';
 import { Website } from './website.entity';
 import { WebsiteService } from './website.service';
 import { Route } from '../../infra/shared/decorators/route.decorator';
@@ -69,6 +69,34 @@ export class WebsiteController {
   async saveData(@Body() data: CreateWebsiteDto): Promise<Website> {
     try {
       return await this.websiteService.create(data);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('/add-like')
+  @ApiOperation({ summary: 'Method: adds like to website' })
+  @ApiCreatedResponse({
+    description: 'The like added successfully',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  async addLikeToArticle(@Body() data: LikeDto): Promise<Website> {
+    try {
+      return await this.websiteService.addLikeToWebsite(data);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('/remove-like')
+  @ApiOperation({ summary: 'Method: removes like from website' })
+  @ApiCreatedResponse({
+    description: 'The like removed successfully',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  async removeLikeFromArticle(@Body() data: LikeDto): Promise<Website> {
+    try {
+      return await this.websiteService.removeLikeFromWebsite(data);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
