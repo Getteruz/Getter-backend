@@ -20,7 +20,7 @@ export class UsersService {
   ) {}
 
   async getById(id: string): Promise<User> {
-    const user = await this.usersRepository.getById(id);
+    const user = await this.usersRepository.getOne(id);
     if (user) {
       return user;
     }

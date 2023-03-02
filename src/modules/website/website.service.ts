@@ -6,12 +6,13 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { FindOptionsWhere } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileService } from '../file/file.service';
-import { UpdateWebsiteDto, CreateWebsiteDto } from './dto';
+import { UpdateWebsiteDto, CreateWebsiteDto, LikeDto } from './dto';
 import { WebsiteRepository } from './website.repository';
 import { Website } from './website.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { UsersService } from '../user/user.service';
 
 @Injectable()
 export class WebsiteService {
@@ -20,6 +21,7 @@ export class WebsiteService {
     private readonly websiteRepository: WebsiteRepository,
     private readonly fileService: FileService,
     private readonly connection: DataSource,
+    private readonly userService: UsersService,
   ) {}
 
   async getAll(
@@ -40,6 +42,7 @@ export class WebsiteService {
     const website = await this.websiteRepository.findOne({
       relations: {
         avatar: true,
+        likes: true,
       },
       where: { id },
     });
@@ -76,6 +79,31 @@ export class WebsiteService {
     const data = await this.websiteRepository.save(response);
 
     return await this.uploadScreenShotImage(value.link, value.title, data.id);
+  }
+
+  async addLikeToWebsite(values: LikeDto) {
+    const website = await this.getOne(values.websiteId);
+    const user = await this.userService.getById(values.userId);
+
+    website.likes = website.likes || [];
+    website.likes.push(user);
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(website);
+    });
+    return website;
+  }
+
+  async removeLikeFromWebsite(values: LikeDto) {
+    const website = await this.getOne(values.websiteId);
+
+    website.likes = website.likes || [];
+    website.likes = website.likes.filter((u) => u.id != values.userId);
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(website);
+    });
+    return website;
   }
 
   async uploadScreenShotImage(link: string, title: string, id: string) {

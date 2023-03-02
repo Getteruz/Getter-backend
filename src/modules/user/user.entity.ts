@@ -7,6 +7,7 @@ import {
   JoinColumn,
   OneToMany,
   OneToOne,
+  ManyToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
@@ -15,6 +16,7 @@ import { Position } from '../position/position.entity';
 import { Article } from '../article/article.entity';
 import { Comment } from '../comment/comment.entity';
 import { FileEntity } from '../file/file.entity';
+import { Website } from '../website/website.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -56,6 +58,18 @@ export class User extends BaseEntity {
   })
   @JoinColumn()
   avatar: FileEntity;
+
+  @ManyToMany(() => Article, (article) => article.likes, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  articleLikes: Article[];
+
+  @ManyToMany(() => Website, (website) => website.likes, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  websiteLikes: Website[];
 
   public async hashPassword(password: string): Promise<void> {
     this.password = await bcrypt.hash(password, 10);

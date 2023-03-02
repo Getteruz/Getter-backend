@@ -30,6 +30,13 @@ export class UsersRepository {
       .getOne();
   }
 
+  async getOne(id: string): Promise<any> {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
+
   async getByEmail(email: string): Promise<User> {
     return this.usersRepository
       .createQueryBuilder()

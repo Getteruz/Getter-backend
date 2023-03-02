@@ -7,6 +7,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Category } from '../category/category.entity';
 import { Comment } from '../comment/comment.entity';
@@ -27,14 +29,14 @@ export class Article extends BaseEntity {
   @Column({ type: 'timestamp', nullable: false, default: () => 'NOW()' })
   date: string;
 
-  @Column({ default: 0 })
-  like: number;
-
   @Column('text', { array: true })
   tags: string[];
 
-  @Column({ default: 0 })
-  commentCount: number;
+  @ManyToMany(() => User, (user) => user.articleLikes, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  likes: User[];
 
   @OneToMany(() => Comment, (comment) => comment.article)
   comments: Comment[];

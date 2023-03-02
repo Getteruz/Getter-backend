@@ -2,7 +2,7 @@ import { ParseFilePipeBuilder } from '@nestjs/common';
 
 const FileUploadValidationForUpdate = new ParseFilePipeBuilder()
   .addFileTypeValidator({
-    fileType: /(jpg|jpeg|png|gif)$/,
+    fileType: /(jpg|jpeg|png|gif|mp4)$/,
   })
   .addMaxSizeValidator({
     maxSize: 5 * 1024 * 1024,

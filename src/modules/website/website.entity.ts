@@ -4,9 +4,12 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
   OneToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { JoinColumn } from 'typeorm/decorator/relations/JoinColumn';
 import { FileEntity } from '../file/file.entity';
+import { User } from '../user/user.entity';
 
 @Entity({ name: 'website' })
 export class Website extends BaseEntity {
@@ -19,11 +22,14 @@ export class Website extends BaseEntity {
   @Column()
   creator: string;
 
-  @Column({ default: 0 })
-  like: number;
-
   @Column()
   link: string;
+
+  @ManyToMany(() => User, (user) => user.websiteLikes, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  likes: User[];
 
   @Column({ default: false })
   isActive: boolean;

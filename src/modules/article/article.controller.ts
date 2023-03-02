@@ -22,7 +22,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 
-import { CreateArticleDto, UpdateArticleDto } from './dto';
+import { CreateArticleDto, LikeDto, UpdateArticleDto } from './dto';
 import { Article } from './article.entity';
 import { ArticleService } from './article.service';
 import { MulterStorage } from '../../infra/helpers';
@@ -81,6 +81,34 @@ export class ArticleController {
   ): Promise<InsertResult | Article> {
     try {
       return await this.articleService.create(data, file);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('/add-like')
+  @ApiOperation({ summary: 'Method: adds like to article' })
+  @ApiCreatedResponse({
+    description: 'The like added successfully',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  async addLikeToArticle(@Body() data: LikeDto): Promise<Article> {
+    try {
+      return await this.articleService.addLikeToArticle(data);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('/remove-like')
+  @ApiOperation({ summary: 'Method: removes like from article' })
+  @ApiCreatedResponse({
+    description: 'The like removed successfully',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  async removeLikeFromArticle(@Body() data: LikeDto): Promise<Article> {
+    try {
+      return await this.articleService.removeLikeFromArticle(data);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
