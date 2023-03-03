@@ -22,7 +22,11 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 
-import { CreatePortfolioDto, UpdatePortfolioDto } from './dto';
+import {
+  CreatePortfolioDto,
+  UpdatePortfolioDto,
+  LikePortfolioDto,
+} from './dto';
 import { Portfolio } from './portfolio.entity';
 import { PortfolioService } from './portfolio.service';
 import { MulterStorage } from '../../infra/helpers';
@@ -74,7 +78,7 @@ export class PortfolioController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: MulterStorage('uploads/portfolio'),
+      storage: MulterStorage('uploads/image/portfolio'),
     }),
   )
   @HttpCode(HttpStatus.CREATED)
@@ -89,6 +93,36 @@ export class PortfolioController {
     }
   }
 
+  @Post('/add-like')
+  @ApiOperation({ summary: 'Method: adds like to portfolio' })
+  @ApiCreatedResponse({
+    description: 'The like added successfully',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  async addLikeToArticle(@Body() data: LikePortfolioDto): Promise<Portfolio> {
+    try {
+      return await this.portfolioService.addLikeToPortfolio(data);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('/remove-like')
+  @ApiOperation({ summary: 'Method: removes like from portfolio' })
+  @ApiCreatedResponse({
+    description: 'The like removed successfully',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  async removeLikeFromArticle(
+    @Body() data: LikePortfolioDto,
+  ): Promise<Portfolio> {
+    try {
+      return await this.portfolioService.removeLikeFromPortfolio(data);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @Patch('/:id')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: updating portfolio' })
@@ -97,7 +131,7 @@ export class PortfolioController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: MulterStorage('uploads/portfolio'),
+      storage: MulterStorage('uploads/image/portfolio'),
     }),
   )
   @HttpCode(HttpStatus.OK)

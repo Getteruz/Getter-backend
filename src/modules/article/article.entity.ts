@@ -32,6 +32,9 @@ export class Article extends BaseEntity {
   @Column('text', { array: true })
   tags: string[];
 
+  @Column({default:0})
+  likesCount:number
+
   @ManyToMany(() => User, (user) => user.articleLikes, {
     onDelete: 'CASCADE',
   })

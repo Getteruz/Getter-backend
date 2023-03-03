@@ -113,7 +113,7 @@ export class WebsiteController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: MulterStorage('uploads/website'),
+      storage: MulterStorage('uploads/image/website'),
     }),
   )
   @HttpCode(HttpStatus.OK)

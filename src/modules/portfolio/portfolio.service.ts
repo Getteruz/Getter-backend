@@ -8,10 +8,15 @@ import { FindOptionsWhere } from 'typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { UpdatePortfolioDto, CreatePortfolioDto } from './dto';
+import {
+  UpdatePortfolioDto,
+  CreatePortfolioDto,
+  LikePortfolioDto,
+} from './dto';
 import { PortfolioRepository } from './portfolio.repository';
 import { FileService } from '../file/file.service';
 import { Portfolio } from './portfolio.entity';
+import { UsersService } from '../user/user.service';
 
 @Injectable()
 export class PortfolioService {
@@ -20,6 +25,7 @@ export class PortfolioService {
     private readonly portfolioRepository: PortfolioRepository,
     private readonly fileService: FileService,
     private readonly connection: DataSource,
+    private readonly userService: UsersService,
   ) {}
 
   async getAll(
@@ -40,6 +46,7 @@ export class PortfolioService {
     const portfolio = await this.portfolioRepository.findOne({
       relations: {
         avatar: true,
+        likes: true,
       },
       where: { id },
     });
@@ -87,6 +94,33 @@ export class PortfolioService {
     } else {
       return response;
     }
+  }
+
+  async addLikeToPortfolio(values: LikePortfolioDto) {
+    const portfolio = await this.getOne(values.portfolioId);
+    const user = await this.userService.getById(values.userId);
+
+    portfolio.likes = portfolio.likes || [];
+    portfolio.likes.push(user);
+    portfolio.likesCount = portfolio.likes.length;
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(portfolio);
+    });
+    return portfolio;
+  }
+
+  async removeLikeFromPortfolio(values: LikePortfolioDto) {
+    const portfolio = await this.getOne(values.portfolioId);
+
+    portfolio.likes = portfolio.likes || [];
+    portfolio.likes = portfolio.likes.filter((u) => u.id != values.userId);
+    portfolio.likesCount = portfolio.likes.length;
+
+    await this.connection.transaction(async (manager: EntityManager) => {
+      await manager.save(portfolio);
+    });
+    return portfolio;
   }
 
   async uploadImage(file: Express.Multer.File, id: string) {

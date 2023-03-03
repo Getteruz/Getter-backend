@@ -22,7 +22,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 
-import { CreateArticleDto, LikeDto, UpdateArticleDto } from './dto';
+import { CreateArticleDto, LikeArticleDto, UpdateArticleDto } from './dto';
 import { Article } from './article.entity';
 import { ArticleService } from './article.service';
 import { MulterStorage } from '../../infra/helpers';
@@ -74,7 +74,7 @@ export class ArticleController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: MulterStorage('uploads/article'),
+      storage: MulterStorage('uploads/image/article'),
     }),
   )
   @HttpCode(HttpStatus.CREATED)
@@ -95,7 +95,7 @@ export class ArticleController {
     description: 'The like added successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async addLikeToArticle(@Body() data: LikeDto): Promise<Article> {
+  async addLikeToArticle(@Body() data: LikeArticleDto): Promise<Article> {
     try {
       return await this.articleService.addLikeToArticle(data);
     } catch (err) {
@@ -109,7 +109,7 @@ export class ArticleController {
     description: 'The like removed successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async removeLikeFromArticle(@Body() data: LikeDto): Promise<Article> {
+  async removeLikeFromArticle(@Body() data: LikeArticleDto): Promise<Article> {
     try {
       return await this.articleService.removeLikeFromArticle(data);
     } catch (err) {
@@ -125,7 +125,7 @@ export class ArticleController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: MulterStorage('uploads/article'),
+      storage: MulterStorage('uploads/image/article'),
     }),
   )
   @HttpCode(HttpStatus.OK)

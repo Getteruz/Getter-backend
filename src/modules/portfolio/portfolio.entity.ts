@@ -5,9 +5,12 @@ import {
   BaseEntity,
   JoinColumn,
   OneToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 import { FileEntity } from '../file/file.entity';
+import { User } from '../user/user.entity';
 
 @Entity({ name: 'portfolio' })
 export class Portfolio extends BaseEntity {
@@ -21,13 +24,16 @@ export class Portfolio extends BaseEntity {
   creator: string;
 
   @Column({ default: 0 })
-  like: number;
-
-  @Column({ default: 0 })
-  likeCount: number;
+  likesCount: number;
 
   @Column()
   link: string;
+
+  @ManyToMany(() => User, (user) => user.portfolioLikes, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  likes: User[];
 
   @OneToOne(() => FileEntity, (file) => file.website, {
     onDelete: 'SET NULL',

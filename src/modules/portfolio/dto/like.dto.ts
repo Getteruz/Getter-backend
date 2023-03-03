@@ -1,14 +1,14 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-class LikeArticleDto {
+class LikePortfolioDto {
   @ApiProperty({
-    description: `Article ID`,
+    description: `Portfolio ID`,
     example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
   })
   @IsNotEmpty()
   @IsString()
-  readonly articleId: string;
+  readonly portfolioId: string;
 
   @ApiProperty({
     description: `User ID`,
@@ -19,4 +19,4 @@ class LikeArticleDto {
   readonly userId: string;
 }
 
-export default LikeArticleDto;
+export default LikePortfolioDto;

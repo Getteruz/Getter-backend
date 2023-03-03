@@ -17,6 +17,7 @@ import { Article } from '../article/article.entity';
 import { Comment } from '../comment/comment.entity';
 import { FileEntity } from '../file/file.entity';
 import { Website } from '../website/website.entity';
+import { Portfolio } from '../portfolio/portfolio.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -70,6 +71,12 @@ export class User extends BaseEntity {
     onDelete: 'CASCADE',
   })
   websiteLikes: Website[];
+
+  @ManyToMany(() => Portfolio, (portfolio) => portfolio.likes, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  portfolioLikes: Portfolio[];
 
   public async hashPassword(password: string): Promise<void> {
     this.password = await bcrypt.hash(password, 10);

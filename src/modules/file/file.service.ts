@@ -60,8 +60,8 @@ export class FileService {
 
   async uploadScreenshotWebsite(link: string, title: string) {
     const name = title + `${new Date().getTime()}` + '.png';
-    const path = 'uploads/website/' + name;
-    const url = 'http://localhost:4000/website/' + name;
+    const path = 'uploads/image/website/' + name;
+    const url = 'http://localhost:4000/image/website/' + name;
     await ScreenShotWebsite(link, path);
 
     const newFile = new FileEntity();

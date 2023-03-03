@@ -8,7 +8,7 @@ import { FindOptionsWhere } from 'typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { UpdateArticleDto, CreateArticleDto, LikeDto } from './dto';
+import { UpdateArticleDto, CreateArticleDto, LikeArticleDto } from './dto';
 import { ArticleRepository } from './article.repository';
 import { FileService } from '../file/file.service';
 import { Article } from './article.entity';
@@ -102,12 +102,13 @@ export class ArticleService {
     }
   }
 
-  async addLikeToArticle(values: LikeDto) {
+  async addLikeToArticle(values: LikeArticleDto) {
     const article = await this.getOne(values.articleId);
     const user = await this.userService.getById(values.userId);
 
     article.likes = article.likes || [];
     article.likes.push(user);
+    article.likesCount = article.likes.length;
 
     await this.connection.transaction(async (manager: EntityManager) => {
       await manager.save(article);
@@ -115,11 +116,12 @@ export class ArticleService {
     return article;
   }
 
-  async removeLikeFromArticle(values: LikeDto) {
+  async removeLikeFromArticle(values: LikeArticleDto) {
     const article = await this.getOne(values.articleId);
 
     article.likes = article.likes || [];
     article.likes = article.likes.filter((u) => u.id != values.userId);
+    article.likesCount = article.likes.length;
 
     await this.connection.transaction(async (manager: EntityManager) => {
       await manager.save(article);
