@@ -25,6 +25,9 @@ export class Website extends BaseEntity {
   @Column()
   link: string;
 
+  @Column({default:0})
+  likesCount:number
+
   @ManyToMany(() => User, (user) => user.websiteLikes, {
     onDelete: 'CASCADE',
   })

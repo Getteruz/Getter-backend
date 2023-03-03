@@ -33,12 +33,14 @@ import {
 import { Route } from '../../infra/shared/decorators/route.decorator';
 import { Query } from '@nestjs/common/decorators';
 import { PaginationDto } from '../../infra/shared/dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Article')
 @Controller('article')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  @Public()
   @Get('/')
   @ApiOperation({ summary: 'Method: returns all articles' })
   @ApiOkResponse({
@@ -53,6 +55,7 @@ export class ArticleController {
     }
   }
 
+  @Public()
   @Get('/:id')
   @ApiOperation({ summary: 'Method: returns single article by id' })
   @ApiOkResponse({

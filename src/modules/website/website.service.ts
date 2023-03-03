@@ -87,6 +87,7 @@ export class WebsiteService {
 
     website.likes = website.likes || [];
     website.likes.push(user);
+    website.likesCount = website.likes.length;
 
     await this.connection.transaction(async (manager: EntityManager) => {
       await manager.save(website);
@@ -99,6 +100,7 @@ export class WebsiteService {
 
     website.likes = website.likes || [];
     website.likes = website.likes.filter((u) => u.id != values.userId);
+    website.likesCount = website.likes.length;
 
     await this.connection.transaction(async (manager: EntityManager) => {
       await manager.save(website);

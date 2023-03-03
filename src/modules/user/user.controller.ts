@@ -34,6 +34,7 @@ import { MulterStorage } from '../../infra/helpers';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { User } from './user.entity';
 import { UsersService } from './user.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('User')
 @Controller('users')
@@ -66,6 +67,7 @@ export class UsersController {
     }
   }
 
+  @Public()
   @Post('/')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: creates new user' })
