@@ -30,12 +30,14 @@ import { Route } from '../../infra/shared/decorators/route.decorator';
 import { PaginationDto } from '../../infra/shared/dto';
 import { MulterStorage } from '../../infra/helpers';
 import { FileUploadValidationForUpdate } from '../../infra/validators';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Website')
 @Controller('website')
 export class WebsiteController {
   constructor(private readonly websiteService: WebsiteService) {}
 
+  @Public()
   @Get('/')
   @ApiOperation({ summary: 'Method: returns all websites' })
   @ApiOkResponse({
@@ -50,6 +52,7 @@ export class WebsiteController {
     }
   }
 
+  @Public()
   @Get('/:id')
   @ApiOperation({ summary: 'Method: returns single website by id' })
   @ApiOkResponse({

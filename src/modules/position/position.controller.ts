@@ -24,12 +24,14 @@ import { PositionService } from './position.service';
 import { Query } from '@nestjs/common/decorators/http/route-params.decorator';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Route } from '../../infra/shared/decorators/route.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Position')
 @Controller('position')
 export class PositionController {
   constructor(private readonly positionService: PositionService) {}
 
+  @Public()
   @Get('/')
   @ApiOperation({ summary: 'Method: returns all positions' })
   @ApiOkResponse({
@@ -44,6 +46,7 @@ export class PositionController {
     }
   }
 
+  @Public()
   @Get('/:id')
   @ApiOperation({ summary: 'Method: returns single position by id' })
   @ApiOkResponse({
