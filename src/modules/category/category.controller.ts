@@ -24,12 +24,14 @@ import { CategoryService } from './category.service';
 import { Route } from '../../infra/shared/decorators/route.decorator';
 import { Query } from '@nestjs/common/decorators';
 import { PaginationDto } from '../../infra/shared/dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Category')
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @Public()
   @Get('/:id')
   @ApiOperation({ summary: 'Method: returns category by id' })
   @ApiOkResponse({
@@ -41,6 +43,7 @@ export class CategoryController {
     return this.categoryService.getById(id);
   }
 
+  @Public()
   @Get('/')
   @ApiOperation({ summary: 'Method: returns all categories' })
   @ApiOkResponse({

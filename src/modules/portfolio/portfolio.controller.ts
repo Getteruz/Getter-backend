@@ -33,12 +33,14 @@ import {
 import { Route } from '../../infra/shared/decorators/route.decorator';
 import { Query } from '@nestjs/common/decorators';
 import { PaginationDto } from '../../infra/shared/dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Portfolio')
 @Controller('portfolio')
 export class PortfolioController {
   constructor(private readonly portfolioService: PortfolioService) {}
 
+  @Public()
   @Get('/')
   @ApiOperation({ summary: 'Method: returns all portfolios' })
   @ApiOkResponse({
@@ -53,6 +55,7 @@ export class PortfolioController {
     }
   }
 
+  @Public()
   @Get('/:id')
   @ApiOperation({ summary: 'Method: returns single portfolio by id' })
   @ApiOkResponse({
