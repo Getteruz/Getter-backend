@@ -100,7 +100,7 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: MulterStorage('uploads/user'),
+      storage: MulterStorage('uploads/image/user'),
     }),
   )
   @HttpCode(HttpStatus.OK)
