@@ -12,6 +12,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult, UpdateResult } from 'typeorm';
@@ -77,29 +78,41 @@ export class WebsiteController {
     }
   }
 
-  @Post('/add-like')
+  @Post('/add-like/:websiteId')
   @ApiOperation({ summary: 'Method: adds like to website' })
   @ApiCreatedResponse({
     description: 'The like added successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async addLikeToArticle(@Body() data: LikeDto): Promise<Website> {
+  async addLikeToArticle(
+    @Req() request,
+    @Param('websiteId') id: string,
+  ): Promise<Website> {
     try {
-      return await this.websiteService.addLikeToWebsite(data);
+      return await this.websiteService.addLikeToWebsite({
+        websiteId: id,
+        userId: request.user.id,
+      });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @Post('/remove-like')
+  @Post('/remove-like/:websiteId')
   @ApiOperation({ summary: 'Method: removes like from website' })
   @ApiCreatedResponse({
     description: 'The like removed successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async removeLikeFromArticle(@Body() data: LikeDto): Promise<Website> {
+  async removeLikeFromArticle(
+    @Req() request,
+    @Param('websiteId') id: string,
+  ): Promise<Website> {
     try {
-      return await this.websiteService.removeLikeFromWebsite(data);
+      return await this.websiteService.removeLikeFromWebsite({
+        websiteId: id,
+        userId: request.user.id,
+      });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

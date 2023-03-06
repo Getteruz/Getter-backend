@@ -22,7 +22,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 
-import { CreateArticleDto, LikeArticleDto, UpdateArticleDto } from './dto';
+import { CreateArticleDto, UpdateArticleDto } from './dto';
 import { Article } from './article.entity';
 import { ArticleService } from './article.service';
 import { MulterStorage } from '../../infra/helpers';
@@ -31,7 +31,7 @@ import {
   FileUploadValidationForUpdate,
 } from '../../infra/validators';
 import { Route } from '../../infra/shared/decorators/route.decorator';
-import { Query } from '@nestjs/common/decorators';
+import { Query, Req } from '@nestjs/common/decorators';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Public } from '../auth/decorators/public.decorator';
 
@@ -62,8 +62,8 @@ export class ArticleController {
     description: 'The article was returned successfully',
   })
   @HttpCode(HttpStatus.OK)
-  async getMe(@Param('id') id: string): Promise<Article> {
-    return this.articleService.getOne(id);
+  async getMe(@Param('id') id: string, @Req() { cookies }): Promise<{ data }> {
+    return this.articleService.getOne(id, cookies);
   }
 
   @Post('/')
@@ -89,15 +89,21 @@ export class ArticleController {
     }
   }
 
-  @Post('/add-like')
+  @Post('/add-like/:articleId')
   @ApiOperation({ summary: 'Method: adds like to article' })
   @ApiCreatedResponse({
     description: 'The like added successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async addLikeToArticle(@Body() data: LikeArticleDto): Promise<Article> {
+  async addLikeToArticle(
+    @Req() request,
+    @Param('articleId') articleId: string,
+  ): Promise<Article> {
     try {
-      return await this.articleService.addLikeToArticle(data);
+      return await this.articleService.addLikeToArticle({
+        userId: request.user.id,
+        articleId,
+      });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -109,9 +115,15 @@ export class ArticleController {
     description: 'The like removed successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async removeLikeFromArticle(@Body() data: LikeArticleDto): Promise<Article> {
+  async removeLikeFromArticle(
+    @Req() request,
+    @Param('articleId') articleId: string,
+  ): Promise<Article> {
     try {
-      return await this.articleService.removeLikeFromArticle(data);
+      return await this.articleService.removeLikeFromArticle({
+        userId: request.user.id,
+        articleId,
+      });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

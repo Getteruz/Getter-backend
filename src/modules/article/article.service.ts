@@ -39,7 +39,35 @@ export class ArticleService {
     });
   }
 
-  async getOne(id: string) {
+  async getOne(id: string, cookie?) {
+    const article = await this.articleRepository.findOne({
+      relations: {
+        user: true,
+        comments: {
+          user: true,
+        },
+        avatar: true,
+        likes: true,
+      },
+      where: { id },
+    });
+
+    if (!article) {
+      throw new HttpException('Article not found', HttpStatus.NOT_FOUND);
+    }
+    if (cookie.user_id) {
+      const isLiked = article.likes.find((u) => u.id == cookie.user_id);
+      if (isLiked) {
+        return { data: { ...article, isLiked: true } };
+      } else {
+        return { data: { ...article, isLiked: false } };
+      }
+    }
+
+    return { data: { ...article, isLiked: false } };
+  }
+
+  async getById(id: string) {
     const article = await this.articleRepository.findOne({
       relations: {
         user: true,
@@ -103,7 +131,7 @@ export class ArticleService {
   }
 
   async addLikeToArticle(values: LikeArticleDto) {
-    const article = await this.getOne(values.articleId);
+    const article = await this.getById(values.articleId);
     const user = await this.userService.getById(values.userId);
 
     article.likes = article.likes || [];
@@ -117,7 +145,7 @@ export class ArticleService {
   }
 
   async removeLikeFromArticle(values: LikeArticleDto) {
-    const article = await this.getOne(values.articleId);
+    const article = await this.getById(values.articleId);
 
     article.likes = article.likes || [];
     article.likes = article.likes.filter((u) => u.id != values.userId);
@@ -131,7 +159,7 @@ export class ArticleService {
 
   async uploadImage(file: Express.Multer.File, id: string) {
     const avatar = await this.fileService.uploadFile(file);
-    const data = await this.getOne(id);
+    const data = await this.getById(id);
     data.avatar = avatar;
 
     await this.connection.transaction(async (manager: EntityManager) => {
@@ -142,7 +170,7 @@ export class ArticleService {
   }
 
   async updateImage(file: Express.Multer.File, id: string) {
-    const data = await this.getOne(id);
+    const data = await this.getById(id);
     const avatar = await this.fileService.updateFile(data.avatar.id, file);
     data.avatar = avatar;
 
@@ -154,7 +182,7 @@ export class ArticleService {
   }
 
   async deleteImage(id: string) {
-    const data = await this.getOne(id);
+    const data = await this.getById(id);
     const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
   }
 }

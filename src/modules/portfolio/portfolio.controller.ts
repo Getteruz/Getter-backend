@@ -35,7 +35,7 @@ import {
   FileUploadValidationForUpdate,
 } from '../../infra/validators';
 import { Route } from '../../infra/shared/decorators/route.decorator';
-import { Query } from '@nestjs/common/decorators';
+import { Query, Req } from '@nestjs/common/decorators';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Public } from '../auth/decorators/public.decorator';
 
@@ -93,31 +93,41 @@ export class PortfolioController {
     }
   }
 
-  @Post('/add-like')
+  @Post('/add-like/:portfolioId')
   @ApiOperation({ summary: 'Method: adds like to portfolio' })
   @ApiCreatedResponse({
     description: 'The like added successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async addLikeToArticle(@Body() data: LikePortfolioDto): Promise<Portfolio> {
+  async addLikeToArticle(
+    @Req() request,
+    @Param('portfolioId') id: string,
+  ): Promise<Portfolio> {
     try {
-      return await this.portfolioService.addLikeToPortfolio(data);
+      return await this.portfolioService.addLikeToPortfolio({
+        portfolioId: id,
+        userId: request.user.id,
+      });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @Post('/remove-like')
+  @Post('/remove-like/:portfolioId')
   @ApiOperation({ summary: 'Method: removes like from portfolio' })
   @ApiCreatedResponse({
     description: 'The like removed successfully',
   })
   @HttpCode(HttpStatus.CREATED)
   async removeLikeFromArticle(
-    @Body() data: LikePortfolioDto,
+    @Req() request,
+    @Param('portfolioId') id: string,
   ): Promise<Portfolio> {
     try {
-      return await this.portfolioService.removeLikeFromPortfolio(data);
+      return await this.portfolioService.removeLikeFromPortfolio({
+        portfolioId: id,
+        userId: request.user.id,
+      });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

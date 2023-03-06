@@ -57,6 +57,7 @@ export class AuthController {
     const refreshToken = this.authService.getJWT('refresh', user.id);
     response.cookie(ACCESS_TOKEN_USER, accessToken, accessTokenOptions);
     response.cookie(REFRESH_TOKEN_USER, refreshToken, refreshTokenOptions);
+    response.cookie('user_id', user.id, accessTokenOptions);
   }
 
   @Public()
@@ -87,5 +88,6 @@ export class AuthController {
     const refreshToken = this.authService.getJWT('refresh', user.id);
     response.cookie(ACCESS_TOKEN_USER, accessToken, accessTokenOptions);
     response.cookie(REFRESH_TOKEN_USER, refreshToken, refreshTokenOptions);
+    response.cookie('user_id', user.id, accessTokenOptions);
   }
 }
