@@ -30,7 +30,7 @@ export class WebsiteService {
   ): Promise<Pagination<Website>> {
     return paginate<Website>(this.websiteRepository, options, {
       order: {
-        title: 'ASC',
+        date: 'DESC',
       },
       relations: {
         avatar: true,
@@ -50,7 +50,6 @@ export class WebsiteService {
     if (!website) {
       throw new HttpException('Website not found', HttpStatus.NOT_FOUND);
     }
-
     return website;
   }
 
@@ -75,7 +74,7 @@ export class WebsiteService {
   }
 
   async create(value: CreateWebsiteDto) {
-    const response = await this.websiteRepository.create(value);
+    const response = this.websiteRepository.create(value);
     const data = await this.websiteRepository.save(response);
 
     return await this.uploadScreenShotImage(value.link, value.title, data.id);

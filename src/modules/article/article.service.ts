@@ -26,16 +26,17 @@ export class ArticleService {
 
   async getAll(
     options: IPaginationOptions,
-    where?: FindOptionsWhere<Article>,
+    where,
   ): Promise<Pagination<Article>> {
     return paginate<Article>(this.articleRepository, options, {
       order: {
-        title: 'ASC',
+        date: 'DESC',
       },
       relations: {
         user: true,
         avatar: true,
       },
+      where,
     });
   }
 

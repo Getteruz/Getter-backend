@@ -32,8 +32,11 @@ export class Article extends BaseEntity {
   @Column('text', { array: true })
   tags: string[];
 
-  @Column({default:0})
-  likesCount:number
+  @Column({ default: 0 })
+  likesCount: number;
+
+  @Column('boolean', { default: false })
+  isActive: boolean = false;
 
   @ManyToMany(() => User, (user) => user.articleLikes, {
     onDelete: 'CASCADE',

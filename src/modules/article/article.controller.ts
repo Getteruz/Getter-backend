@@ -49,7 +49,18 @@ export class ArticleController {
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
     try {
-      return await this.articleService.getAll({ ...query, route });
+      let where;
+      if (query.isActive == 'true') {
+        where = { isActive: true };
+      } else if (query.isActive == 'false') {
+        where = { isActive: false };
+      } else {
+        where = {};
+      }
+      return await this.articleService.getAll(
+        { limit: query.limit, page: query.page, route },
+        where,
+      );
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -63,6 +74,8 @@ export class ArticleController {
   })
   @HttpCode(HttpStatus.OK)
   async getMe(@Param('id') id: string, @Req() { cookies }): Promise<{ data }> {
+    console.log(cookies);
+
     return this.articleService.getOne(id, cookies);
   }
 

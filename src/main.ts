@@ -11,7 +11,10 @@ async function bootstrap() {
     logger: ['log', 'warn', 'error'],
   });
 
-  app.enableCors();
+  app.enableCors({
+    origin: 'https://localhost:3000',
+    credentials: true,
+  });
   app.use(cookieParser());
 
   app.useGlobalPipes(

@@ -42,6 +42,9 @@ export class User extends BaseEntity {
   @Column({ default: false })
   isEmailValid: boolean;
 
+  @Column({ type: 'timestamp', nullable: false, default: () => 'NOW()' })
+  createdAt: string;
+
   @ManyToOne(() => Position, (position) => position.users, {
     onDelete: 'SET NULL',
   })

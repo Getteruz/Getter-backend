@@ -25,17 +25,23 @@ export class Website extends BaseEntity {
   @Column()
   link: string;
 
-  @Column({default:0})
-  likesCount:number
+  @Column({ default: 0 })
+  likesCount: number;
+
+  @Column('boolean', { default: false })
+  isActive: boolean = false;
+
+  @Column('boolean', { default: false })
+  isViewed: boolean = false;
+
+  @Column({ type: 'timestamp', nullable: false, default: () => 'NOW()' })
+  date: string;
 
   @ManyToMany(() => User, (user) => user.websiteLikes, {
     onDelete: 'CASCADE',
   })
   @JoinTable()
   likes: User[];
-
-  @Column({ default: false })
-  isActive: boolean;
 
   @OneToOne(() => FileEntity, (file) => file.website, {
     onDelete: 'SET NULL',

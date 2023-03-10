@@ -1,6 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { DataSource, EntityManager } from 'typeorm';
+import {
+  IPaginationOptions,
+  Pagination,
+  paginate,
+} from 'nestjs-typeorm-paginate';
+import { FindOptionsWhere } from 'typeorm';
 
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersRepository } from './user.repository';
@@ -8,10 +14,12 @@ import { User } from './user.entity';
 import { MailService } from '../mail/mail.service';
 import { FileService } from '../file/file.service';
 import { PositionService } from '../position/position.service';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
+    @InjectRepository(User)
     private readonly usersRepository: UsersRepository,
     private readonly mailService: MailService,
     private readonly connection: DataSource,
@@ -19,21 +27,38 @@ export class UsersService {
     private readonly positionService: PositionService,
   ) {}
 
+  async getAll(
+    options: IPaginationOptions,
+    where?: FindOptionsWhere<User>,
+  ): Promise<Pagination<User>> {
+    return paginate<User>(this.usersRepository, options, {
+      order: {
+        name: 'ASC',
+      },
+      relations: {
+        avatar: true,
+        position: true,
+      },
+    });
+  }
+
   async getById(id: string): Promise<User> {
-    const user = await this.usersRepository.getOne(id);
+    const user = await this.usersRepository.findOne({ where: { id } });
     if (user) {
       return user;
     }
     throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
   }
 
-  async getAll() {
-    const [data, count] = await this.usersRepository.getAll();
-    return { items: data, totalItemsCount: count };
-  }
-
   async getOne(id: string): Promise<User> {
-    const user = await this.usersRepository.getById(id);
+    const user = await this.usersRepository.findOne({
+      relations: {
+        avatar: true,
+        position: true,
+        articles: true,
+      },
+      where: { id },
+    });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -41,7 +66,7 @@ export class UsersService {
   }
 
   async getByEmail(email: string): Promise<User> {
-    const user = await this.usersRepository.getByEmail(email);
+    const user = await this.usersRepository.findOne({ where: { email } });
     if (user) {
       return user;
     }
@@ -50,12 +75,18 @@ export class UsersService {
 
   async deleteOne(id: string) {
     await this.deleteImage(id);
-    const response = await this.usersRepository.remove(id);
+    const response = await this.usersRepository.delete(id);
     return response;
   }
 
   async change(value: UpdateUserDto, id: string, file: Express.Multer.File) {
-    const response = await this.usersRepository.update(id, value);
+    const response = await this.usersRepository
+      .createQueryBuilder()
+      .update(User)
+      .set(value as unknown as User)
+      .where('id = :id', { id })
+      .execute();
+
     if (file) {
       return await this.updateImage(file, id);
     } else {
@@ -85,7 +116,7 @@ export class UsersService {
       //   password: userData.password,
       // });
 
-      const newUser = await this.usersRepository.getById(user.id);
+      const newUser = await this.getOne(user.id);
       return newUser;
     } catch (err) {
       if (err?.errno === 1062) {

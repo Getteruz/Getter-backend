@@ -1,4 +1,4 @@
-import { isNumber, IsNumber, IsOptional } from 'class-validator';
+import { isNumber, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, TransformFnParams } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
@@ -31,6 +31,14 @@ class PaginationDto {
   @IsNumber()
   @Transform(parsePaginationQuery)
   readonly page: number;
+
+  @ApiProperty({
+    description: `IsActive`,
+    example: true,
+  })
+  @IsOptional()
+  @IsString()
+  readonly isActive?: string;
 }
 
 export default PaginationDto;

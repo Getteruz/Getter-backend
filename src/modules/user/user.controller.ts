@@ -35,6 +35,8 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 import { User } from './user.entity';
 import { UsersService } from './user.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { Route } from '../../infra/shared/decorators/route.decorator';
+import { PaginationDto } from '../../infra/shared/dto';
 
 @ApiTags('User')
 @Controller('users')
@@ -59,9 +61,11 @@ export class UsersController {
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
-  async getData(): Promise<{ items: User[]; totalItemsCount: number }> {
+  async getData(
+    @Route() route: string, @Query() query: PaginationDto
+  ) {
     try {
-      return await this.usersService.getAll();
+      return await this.usersService.getAll({...query,route});
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
