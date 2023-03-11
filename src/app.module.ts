@@ -11,6 +11,7 @@ import { CategoryModule } from './modules/category/category.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { FileModule } from './modules/file/file.module';
 import { MailModule } from './modules/mail/mail.module';
+import { OrderModule } from './modules/order/order.module';
 import { PortfolioModule } from './modules/portfolio/portfolio.module';
 import { PositionModule } from './modules/position/position.module';
 import { UserModule } from './modules/user/user.module';
@@ -38,6 +39,7 @@ import { WebsiteModule } from './modules/website/website.module';
     CommentModule,
     FileModule,
     MailModule,
+    OrderModule,
     PortfolioModule,
     PositionModule,
     UserModule,

@@ -61,11 +61,9 @@ export class UsersController {
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
-  async getData(
-    @Route() route: string, @Query() query: PaginationDto
-  ) {
+  async getData(@Route() route: string, @Query() query: PaginationDto) {
     try {
-      return await this.usersService.getAll({...query,route});
+      return await this.usersService.getAll({ ...query, route });
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -88,9 +86,10 @@ export class UsersController {
   async register(
     @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
     @Body() userData: CreateUserDto,
+    @Req() request,
   ): Promise<User> {
     try {
-      return await this.usersService.create(userData, file);
+      return await this.usersService.create(userData, file, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -112,9 +111,10 @@ export class UsersController {
     @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() userData: UpdateUserDto,
     @Param('id') id: string,
+    @Req() request,
   ): Promise<UpdateResult | User> {
     try {
-      return await this.usersService.change(userData, id, file);
+      return await this.usersService.change(userData, id, file, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

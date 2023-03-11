@@ -11,6 +11,8 @@ import {
   Get,
   UseInterceptors,
   UploadedFile,
+  Query,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
@@ -31,7 +33,6 @@ import {
   FileUploadValidationForUpdate,
 } from '../../infra/validators';
 import { Route } from '../../infra/shared/decorators/route.decorator';
-import { Query, Req } from '@nestjs/common/decorators';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Public } from '../auth/decorators/public.decorator';
 
@@ -74,8 +75,6 @@ export class ArticleController {
   })
   @HttpCode(HttpStatus.OK)
   async getMe(@Param('id') id: string, @Req() { cookies }): Promise<{ data }> {
-    console.log(cookies);
-
     return this.articleService.getOne(id, cookies);
   }
 
@@ -94,9 +93,10 @@ export class ArticleController {
   async saveData(
     @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
     @Body() data: CreateArticleDto,
+    @Req() request
   ): Promise<InsertResult | Article> {
     try {
-      return await this.articleService.create(data, file);
+      return await this.articleService.create(data, file,request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -158,9 +158,10 @@ export class ArticleController {
     @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() data: UpdateArticleDto,
     @Param('id') id: string,
+    @Req() request
   ): Promise<UpdateResult | Article> {
     try {
-      return await this.articleService.change(data, id, file);
+      return await this.articleService.change(data, id, file,request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

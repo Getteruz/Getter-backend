@@ -42,6 +42,30 @@ export class PortfolioService {
     });
   }
 
+  async getById(id: string, cookie?) {
+    const portfolio = await this.portfolioRepository.findOne({
+      relations: {
+        avatar: true,
+        likes: true,
+      },
+      where: { id },
+    });
+
+    if (!portfolio) {
+      throw new HttpException('Portfolio not found', HttpStatus.NOT_FOUND);
+    }
+    if (cookie.user_id) {
+      const isLiked = portfolio.likes.find((u) => u.id == cookie.user_id);
+      if (isLiked) {
+        return { data: { ...portfolio, isLiked: true } };
+      } else {
+        return { data: { ...portfolio, isLiked: false } };
+      }
+    }
+
+    return { data: { ...portfolio, isLiked: false } };
+  }
+
   async getOne(id: string) {
     const portfolio = await this.portfolioRepository.findOne({
       relations: {
@@ -68,17 +92,18 @@ export class PortfolioService {
     values: UpdatePortfolioDto,
     id: string,
     file: Express.Multer.File,
+    request,
   ) {
     const response = await this.portfolioRepository.update({ id }, values);
 
     if (file) {
-      return await this.updateImage(file, id);
+      return await this.updateImage(file, id, request);
     } else {
       return response;
     }
   }
 
-  async create(values: CreatePortfolioDto, file: Express.Multer.File) {
+  async create(values: CreatePortfolioDto, file: Express.Multer.File, request) {
     const response = await this.portfolioRepository
       .createQueryBuilder()
       .insert()
@@ -90,7 +115,7 @@ export class PortfolioService {
     const id = response.raw[0].id;
 
     if (file) {
-      return await this.uploadImage(file, id);
+      return await this.uploadImage(file, id, request);
     } else {
       return response;
     }
@@ -123,8 +148,8 @@ export class PortfolioService {
     return portfolio;
   }
 
-  async uploadImage(file: Express.Multer.File, id: string) {
-    const avatar = await this.fileService.uploadFile(file);
+  async uploadImage(file: Express.Multer.File, id: string, request) {
+    const avatar = await this.fileService.uploadFile(file, request);
     const data = await this.getOne(id);
     data.avatar = avatar;
 
@@ -135,9 +160,13 @@ export class PortfolioService {
     return data;
   }
 
-  async updateImage(file: Express.Multer.File, id: string) {
+  async updateImage(file: Express.Multer.File, id: string, request) {
     const data = await this.getOne(id);
-    const avatar = await this.fileService.updateFile(data.avatar.id, file);
+    const avatar = await this.fileService.updateFile(
+      data.avatar.id,
+      file,
+      request,
+    );
     data.avatar = avatar;
 
     await this.connection.transaction(async (manager: EntityManager) => {
