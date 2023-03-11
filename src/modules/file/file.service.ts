@@ -63,9 +63,13 @@ export class FileService {
   }
 
   async deleteFileWithFs(path) {
-    return fs.unlink(path, (err) => {
-      if (err) throw err;
-    });
+    try {
+      return fs.unlink(path, (err) => {
+        if (err) console.log(err);
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async uploadScreenshotWebsite(link: string, title: string, request) {
