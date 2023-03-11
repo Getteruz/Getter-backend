@@ -25,7 +25,7 @@ class PaginationDto {
 
   @ApiProperty({
     description: `Page`,
-    example: 3,
+    example: 1,
   })
   @IsOptional()
   @IsNumber()
@@ -39,6 +39,11 @@ class PaginationDto {
   @IsOptional()
   @IsString()
   readonly isActive?: string;
+
+  constructor() {
+    this.limit = this.limit ? this.limit : 100;
+    this.page = this.page ? this.page : 1;
+  }
 }
 
 export default PaginationDto;

@@ -79,7 +79,7 @@ export class UsersService {
     return response;
   }
 
-  async change(value: UpdateUserDto, id: string, file: Express.Multer.File) {
+  async change(value: UpdateUserDto, id: string, file: Express.Multer.File,request) {
     const response = await this.usersRepository
       .createQueryBuilder()
       .update(User)
@@ -88,13 +88,13 @@ export class UsersService {
       .execute();
 
     if (file) {
-      return await this.updateImage(file, id);
+      return await this.updateImage(file, id,request);
     } else {
       return response;
     }
   }
 
-  async create(userData: CreateUserDto, file: Express.Multer.File) {
+  async create(userData: CreateUserDto, file: Express.Multer.File,request) {
     try {
       const user = new User();
 
@@ -102,7 +102,7 @@ export class UsersService {
       user.email = userData.email;
       user.phone = userData.phone;
 
-      const avatar = await this.uploadImage(file);
+      const avatar = await this.uploadImage(file,request);
       user.avatar = avatar;
       const position = await this.positionService.getOne(userData.position);
       user.position = position;
@@ -111,10 +111,10 @@ export class UsersService {
       await this.connection.transaction(async (manager: EntityManager) => {
         await manager.save(user);
       });
-      // await this.mailService.register({
-      //   ...user,
-      //   password: userData.password,
-      // });
+      await this.mailService.register({
+        ...user,
+        password: userData.password,
+      });
 
       const newUser = await this.getOne(user.id);
       return newUser;
@@ -126,14 +126,14 @@ export class UsersService {
     }
   }
 
-  async uploadImage(file: Express.Multer.File) {
-    const avatar = await this.fileService.uploadFile(file);
+  async uploadImage(file: Express.Multer.File,request) {
+    const avatar = await this.fileService.uploadFile(file,request);
     return avatar;
   }
 
-  async updateImage(file: Express.Multer.File, id: string) {
+  async updateImage(file: Express.Multer.File, id: string,request) {
     const data = await this.getOne(id);
-    const avatar = await this.fileService.updateFile(data.avatar.id, file);
+    const avatar = await this.fileService.updateFile(data.avatar.id, file,request);
     data.avatar = avatar;
 
     await this.connection.transaction(async (manager: EntityManager) => {
@@ -149,6 +149,8 @@ export class UsersService {
   }
 
   async setTrueEmail(id) {
+    console.log(id);
+
     const user = await this.getOne(id);
     user.isEmailValid = true;
     await this.connection.transaction(async (manager: EntityManager) => {

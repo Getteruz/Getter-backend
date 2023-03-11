@@ -15,6 +15,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import {
   ApiCreatedResponse,
@@ -47,7 +48,18 @@ export class WebsiteController {
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
     try {
-      return await this.websiteService.getAll({ ...query, route });
+      let where;
+      if (query.isActive == 'true') {
+        where = { isActive: true };
+      } else if (query.isActive == 'false') {
+        where = { isActive: false };
+      } else {
+        where = {};
+      }
+      return await this.websiteService.getAll(
+        { limit: query.limit, page: query.page, route },
+        where,
+      );
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -60,8 +72,8 @@ export class WebsiteController {
     description: 'The website was returned successfully',
   })
   @HttpCode(HttpStatus.OK)
-  async getMe(@Param('id') id: string): Promise<Website> {
-    return this.websiteService.getOne(id);
+  async getMe(@Param('id') id: string, @Req() { cookies }): Promise<{ data }> {
+    return this.websiteService.getById(id, cookies);
   }
 
   @Post('/')
@@ -70,9 +82,12 @@ export class WebsiteController {
     description: 'The website was created successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async saveData(@Body() data: CreateWebsiteDto): Promise<Website> {
+  async saveData(
+    @Body() data: CreateWebsiteDto,
+    @Req() request: Request,
+  ): Promise<Website> {
     try {
-      return await this.websiteService.create(data);
+      return await this.websiteService.create(data, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -134,9 +149,10 @@ export class WebsiteController {
     @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() data: UpdateWebsiteDto,
     @Param('id') id: string,
+    @Req() request,
   ): Promise<UpdateResult | Website> {
     try {
-      return await this.websiteService.change(data, id, file);
+      return await this.websiteService.change(data, id, file, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

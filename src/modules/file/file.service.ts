@@ -13,8 +13,13 @@ export class FileService {
     private readonly connection: DataSource,
   ) {}
 
-  async uploadFile(file: Express.Multer.File) {
-    const url = 'http://localhost:4000/' + file.path.split('uploads\\')[1];
+  async uploadFile(file: Express.Multer.File, request) {
+    const url =
+      request.protocol +
+      '://' +
+      request.hostname +
+      ':4000/' +
+      file.path.split('uploads\\')[1];
     const path = file.path;
 
     const newFile = new FileEntity();
@@ -34,12 +39,17 @@ export class FileService {
     await this.fileRepository.remove(id);
   }
 
-  async updateFile(id: string, file) {
+  async updateFile(id: string, file: Express.Multer.File, request) {
     const changedFile = await this.fileRepository.getById(id);
 
     await this.deleteFileWithFs(changedFile.path);
 
-    const url = 'http://localhost:4000/' + file.path.split('uploads\\')[1];
+    const url =
+      request.protocol +
+      '://' +
+      request.hostname +
+      ':4000/' +
+      file.path.split('uploads\\')[1];
     const path = file.path;
 
     changedFile.url = url;
@@ -58,11 +68,15 @@ export class FileService {
     });
   }
 
-  async uploadScreenshotWebsite(link: string, title: string) {
+  async uploadScreenshotWebsite(link: string, title: string, request) {
     const name = title + `${new Date().getTime()}` + '.png';
     const path = 'uploads/image/website/' + name;
-    const url = 'http://localhost:4000/image/website/' + name;
-    await ScreenShotWebsite(link, path);
+    const url =
+      request.protocol +
+      '://' +
+      request.hostname +
+      ':4000/image/website/' +
+      name;
 
     const newFile = new FileEntity();
     newFile.path = path;
@@ -71,6 +85,12 @@ export class FileService {
     await this.connection.transaction(async (manager: EntityManager) => {
       await manager.save(newFile);
     });
+
+    try {
+      await ScreenShotWebsite(link, path);
+    } catch (err) {
+      return newFile;
+    }
 
     return newFile;
   }

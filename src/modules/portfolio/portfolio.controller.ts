@@ -66,8 +66,8 @@ export class PortfolioController {
     description: 'The portfolio was returned successfully',
   })
   @HttpCode(HttpStatus.OK)
-  async getMe(@Param('id') id: string): Promise<Portfolio> {
-    return this.portfolioService.getOne(id);
+  async getMe(@Param('id') id: string, @Req() { cookies }): Promise<{ data }> {
+    return this.portfolioService.getById(id, cookies);
   }
 
   @Post('/')
@@ -85,9 +85,10 @@ export class PortfolioController {
   async saveData(
     @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
     @Body() data: CreatePortfolioDto,
+    @Req() request,
   ): Promise<InsertResult | Portfolio> {
     try {
-      return await this.portfolioService.create(data, file);
+      return await this.portfolioService.create(data, file, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -149,9 +150,10 @@ export class PortfolioController {
     @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() data: UpdatePortfolioDto,
     @Param('id') id: string,
+    @Req() request,
   ): Promise<UpdateResult | Portfolio> {
     try {
-      return await this.portfolioService.change(data, id, file);
+      return await this.portfolioService.change(data, id, file, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
