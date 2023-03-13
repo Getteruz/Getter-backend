@@ -93,10 +93,10 @@ export class ArticleController {
   async saveData(
     @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
     @Body() data: CreateArticleDto,
-    @Req() request
+    @Req() request,
   ): Promise<InsertResult | Article> {
     try {
-      return await this.articleService.create(data, file,request);
+      return await this.articleService.create(data, file, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -158,10 +158,27 @@ export class ArticleController {
     @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() data: UpdateArticleDto,
     @Param('id') id: string,
-    @Req() request
+    @Req() request,
   ): Promise<UpdateResult | Article> {
     try {
-      return await this.articleService.change(data, id, file,request);
+      return await this.articleService.change(data, id, file, request);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Patch('/isActive/:id')
+  @ApiOperation({ summary: 'Method: updating article isActive' })
+  @ApiOkResponse({
+    description: 'Article active was changed',
+  })
+  @HttpCode(HttpStatus.OK)
+  async changeIsActive(
+    @Body() data: { isActive: boolean },
+    @Param('id') id: string,
+  ): Promise<UpdateResult> {
+    try {
+      return await this.articleService.changeIsActive(data.isActive, id);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

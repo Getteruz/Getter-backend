@@ -34,8 +34,8 @@ export class ArticleService {
       },
       relations: {
         user: {
-          avatar:true,
-          position:true
+          avatar: true,
+          position: true,
         },
         avatar: true,
       },
@@ -47,15 +47,15 @@ export class ArticleService {
     const article = await this.articleRepository.findOne({
       relations: {
         user: {
-          avatar:true,
-          position:true
+          avatar: true,
+          position: true,
         },
         comments: {
           user: true,
         },
         avatar: true,
         likes: true,
-        category:true
+        category: true,
       },
       where: { id },
     });
@@ -105,7 +105,7 @@ export class ArticleService {
     values: UpdateArticleDto,
     id: string,
     file: Express.Multer.File,
-    request
+    request,
   ) {
     const response = await this.articleRepository
       .createQueryBuilder()
@@ -115,13 +115,18 @@ export class ArticleService {
       .execute();
 
     if (file) {
-      return await this.updateImage(file, id,request);
+      return await this.updateImage(file, id, request);
     } else {
       return response;
     }
   }
 
-  async create(values: CreateArticleDto, file: Express.Multer.File,request) {
+  async changeIsActive(isActive: boolean, id: string) {
+    const data = await this.articleRepository.update(id, { isActive });
+    return data;
+  }
+
+  async create(values: CreateArticleDto, file: Express.Multer.File, request) {
     const response = await this.articleRepository
       .createQueryBuilder()
       .insert()
@@ -133,7 +138,7 @@ export class ArticleService {
     const id = response.raw[0].id;
 
     if (file) {
-      return await this.uploadImage(file, id,request);
+      return await this.uploadImage(file, id, request);
     } else {
       return response;
     }
@@ -166,8 +171,8 @@ export class ArticleService {
     return article;
   }
 
-  async uploadImage(file: Express.Multer.File, id: string,request) {
-    const avatar = await this.fileService.uploadFile(file,request);
+  async uploadImage(file: Express.Multer.File, id: string, request) {
+    const avatar = await this.fileService.uploadFile(file, request);
     const data = await this.getById(id);
     data.avatar = avatar;
 
@@ -178,9 +183,13 @@ export class ArticleService {
     return data;
   }
 
-  async updateImage(file: Express.Multer.File, id: string,request) {
+  async updateImage(file: Express.Multer.File, id: string, request) {
     const data = await this.getById(id);
-    const avatar = await this.fileService.updateFile(data.avatar.id, file,request);
+    const avatar = await this.fileService.updateFile(
+      data.avatar.id,
+      file,
+      request,
+    );
     data.avatar = avatar;
 
     await this.connection.transaction(async (manager: EntityManager) => {

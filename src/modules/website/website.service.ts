@@ -98,6 +98,11 @@ export class WebsiteService {
     }
   }
 
+  async changeIsActive(isActive: boolean, id: string) {
+    const data = await this.websiteRepository.update(id, { isActive });
+    return data;
+  }
+
   async create(value: CreateWebsiteDto, request) {
     const response = this.websiteRepository.create(value);
     const data = await this.websiteRepository.save(response);

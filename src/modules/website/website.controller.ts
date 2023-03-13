@@ -158,6 +158,23 @@ export class WebsiteController {
     }
   }
 
+  @Patch('/isActive/:id')
+  @ApiOperation({ summary: 'Method: updating website isActive' })
+  @ApiOkResponse({
+    description: 'Website active was changed',
+  })
+  @HttpCode(HttpStatus.OK)
+  async changeIsActive(
+    @Body() data: { isActive: boolean },
+    @Param('id') id: string,
+  ): Promise<UpdateResult> {
+    try {
+      return await this.websiteService.changeIsActive(data.isActive, id);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @Delete('/:id')
   @ApiOperation({ summary: 'Method: deleting website' })
   @ApiOkResponse({

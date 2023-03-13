@@ -31,9 +31,6 @@ export class Website extends BaseEntity {
   @Column('boolean', { default: false })
   isActive: boolean = false;
 
-  @Column('boolean', { default: false })
-  isViewed: boolean = false;
-
   @Column({ type: 'timestamp', nullable: false, default: () => 'NOW()' })
   date: string;
 
