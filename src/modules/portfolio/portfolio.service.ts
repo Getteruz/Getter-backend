@@ -34,7 +34,7 @@ export class PortfolioService {
   ): Promise<Pagination<Portfolio>> {
     return paginate<Portfolio>(this.portfolioRepository, options, {
       order: {
-        title: 'ASC',
+        date: 'ASC',
       },
       relations: {
         avatar: true,

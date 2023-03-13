@@ -29,6 +29,9 @@ export class Portfolio extends BaseEntity {
   @Column()
   link: string;
 
+  @Column({ type: 'timestamp', nullable: false, default: () => 'NOW()' })
+  date: string;
+
   @ManyToMany(() => User, (user) => user.portfolioLikes, {
     onDelete: 'CASCADE',
   })
