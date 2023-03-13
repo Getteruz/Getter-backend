@@ -33,7 +33,10 @@ export class ArticleService {
         date: 'DESC',
       },
       relations: {
-        user: true,
+        user: {
+          avatar:true,
+          position:true
+        },
         avatar: true,
       },
       where,
@@ -43,12 +46,16 @@ export class ArticleService {
   async getOne(id: string, cookie?) {
     const article = await this.articleRepository.findOne({
       relations: {
-        user: true,
+        user: {
+          avatar:true,
+          position:true
+        },
         comments: {
           user: true,
         },
         avatar: true,
         likes: true,
+        category:true
       },
       where: { id },
     });
