@@ -25,6 +25,8 @@ import { Query } from '@nestjs/common/decorators/http/route-params.decorator';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Route } from '../../infra/shared/decorators/route.decorator';
 import { Public } from '../auth/decorators/public.decorator';
+import { userRoles } from '../../infra/shared/enum';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @ApiTags('Position')
 @Controller('position')
@@ -57,6 +59,7 @@ export class PositionController {
     return this.positionService.getOne(id);
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Post('/')
   @ApiOperation({ summary: 'Method: creates new position' })
   @ApiCreatedResponse({
@@ -71,6 +74,7 @@ export class PositionController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Patch('/:id')
   @ApiOperation({ summary: 'Method: updating position' })
   @ApiOkResponse({
@@ -88,6 +92,7 @@ export class PositionController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Delete('/:id')
   @ApiOperation({ summary: 'Method: deleting position' })
   @ApiOkResponse({

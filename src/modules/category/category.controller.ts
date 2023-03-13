@@ -25,6 +25,8 @@ import { Route } from '../../infra/shared/decorators/route.decorator';
 import { Query } from '@nestjs/common/decorators';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { userRoles } from '../../infra/shared/enum';
 
 @ApiTags('Category')
 @Controller('categories')
@@ -59,6 +61,7 @@ export class CategoryController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Post('/')
   @ApiOperation({ summary: 'Method: creates new category' })
   @ApiCreatedResponse({
@@ -74,6 +77,7 @@ export class CategoryController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Put('/:id')
   @ApiOperation({ summary: 'Method: updating category' })
   @ApiOkResponse({
@@ -92,6 +96,7 @@ export class CategoryController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Delete('/:id')
   @ApiOperation({ summary: 'Method: deleting category' })
   @ApiOkResponse({

@@ -38,6 +38,8 @@ import { Route } from '../../infra/shared/decorators/route.decorator';
 import { Query, Req } from '@nestjs/common/decorators';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { userRoles } from '../../infra/shared/enum';
 
 @ApiTags('Portfolio')
 @Controller('portfolio')
@@ -70,6 +72,7 @@ export class PortfolioController {
     return this.portfolioService.getById(id, cookies);
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Post('/')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: creates new portfolio' })
@@ -93,7 +96,7 @@ export class PortfolioController {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
+  @Public()
   @Post('/add-like/:portfolioId')
   @ApiOperation({ summary: 'Method: adds like to portfolio' })
   @ApiCreatedResponse({
@@ -113,7 +116,7 @@ export class PortfolioController {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
+  @Public()
   @Post('/remove-like/:portfolioId')
   @ApiOperation({ summary: 'Method: removes like from portfolio' })
   @ApiCreatedResponse({
@@ -134,6 +137,7 @@ export class PortfolioController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Patch('/:id')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: updating portfolio' })
@@ -159,6 +163,7 @@ export class PortfolioController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Delete('/:id')
   @ApiOperation({ summary: 'Method: deleting portfolio' })
   @ApiOkResponse({

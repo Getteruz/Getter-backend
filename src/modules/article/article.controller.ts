@@ -35,6 +35,8 @@ import {
 import { Route } from '../../infra/shared/decorators/route.decorator';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { userRoles } from '../../infra/shared/enum';
 
 @ApiTags('Article')
 @Controller('article')
@@ -102,6 +104,7 @@ export class ArticleController {
     }
   }
 
+  @Public()
   @Post('/add-like/:articleId')
   @ApiOperation({ summary: 'Method: adds like to article' })
   @ApiCreatedResponse({
@@ -122,6 +125,7 @@ export class ArticleController {
     }
   }
 
+  @Public()
   @Post('/remove-like')
   @ApiOperation({ summary: 'Method: removes like from article' })
   @ApiCreatedResponse({
@@ -167,6 +171,7 @@ export class ArticleController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Patch('/isActive/:id')
   @ApiOperation({ summary: 'Method: updating article isActive' })
   @ApiOkResponse({

@@ -35,6 +35,8 @@ import {
 import { Route } from '../../infra/shared/decorators/route.decorator';
 import { PaginationDto } from '../../infra/shared/dto';
 import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { userRoles } from '../../infra/shared/enum';
 
 @ApiTags('Order')
 @Controller('order')
@@ -78,6 +80,7 @@ export class OrderController {
     return this.orderService.getById(id);
   }
 
+  @Public()
   @Post('/')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: creates new order' })
@@ -93,10 +96,10 @@ export class OrderController {
   async saveData(
     @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
     @Body() data: CreateOrderDto,
-    @Req() request
+    @Req() request,
   ): Promise<InsertResult | Order> {
     try {
-      return await this.orderService.create(data, file,request);
+      return await this.orderService.create(data, file, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -118,15 +121,16 @@ export class OrderController {
     @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() data: UpdateOrderDto,
     @Param('id') id: string,
-    @Req() request
+    @Req() request,
   ): Promise<UpdateResult | Order> {
     try {
-      return await this.orderService.change(data, id, file,request);
+      return await this.orderService.change(data, id, file, request);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Delete('/:id')
   @ApiOperation({ summary: 'Method: deleting order' })
   @ApiOkResponse({

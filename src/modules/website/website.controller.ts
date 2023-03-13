@@ -33,6 +33,8 @@ import { PaginationDto } from '../../infra/shared/dto';
 import { MulterStorage } from '../../infra/helpers';
 import { FileUploadValidationForUpdate } from '../../infra/validators';
 import { Public } from '../auth/decorators/public.decorator';
+import { userRoles } from '../../infra/shared/enum';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @ApiTags('Website')
 @Controller('website')
@@ -76,6 +78,7 @@ export class WebsiteController {
     return this.websiteService.getById(id, cookies);
   }
 
+  @Public()
   @Post('/')
   @ApiOperation({ summary: 'Method: creates new website' })
   @ApiCreatedResponse({
@@ -92,7 +95,7 @@ export class WebsiteController {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
+  @Public()
   @Post('/add-like/:websiteId')
   @ApiOperation({ summary: 'Method: adds like to website' })
   @ApiCreatedResponse({
@@ -113,6 +116,7 @@ export class WebsiteController {
     }
   }
 
+  @Public()
   @Post('/remove-like/:websiteId')
   @ApiOperation({ summary: 'Method: removes like from website' })
   @ApiCreatedResponse({
@@ -133,6 +137,7 @@ export class WebsiteController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Patch('/:id')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: updating website' })
@@ -158,6 +163,7 @@ export class WebsiteController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Patch('/isActive/:id')
   @ApiOperation({ summary: 'Method: updating website isActive' })
   @ApiOkResponse({
@@ -175,6 +181,7 @@ export class WebsiteController {
     }
   }
 
+  @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
   @Delete('/:id')
   @ApiOperation({ summary: 'Method: deleting website' })
   @ApiOkResponse({
