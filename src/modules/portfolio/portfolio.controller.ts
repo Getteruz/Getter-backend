@@ -96,7 +96,7 @@ export class PortfolioController {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  @Public()
+
   @Post('/add-like/:portfolioId')
   @ApiOperation({ summary: 'Method: adds like to portfolio' })
   @ApiCreatedResponse({
@@ -116,7 +116,7 @@ export class PortfolioController {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  @Public()
+
   @Post('/remove-like/:portfolioId')
   @ApiOperation({ summary: 'Method: removes like from portfolio' })
   @ApiCreatedResponse({

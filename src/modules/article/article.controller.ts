@@ -115,7 +115,6 @@ export class ArticleController {
     }
   }
 
-  @Public()
   @Post('/add-like/:articleId')
   @ApiOperation({ summary: 'Method: adds like to article' })
   @ApiCreatedResponse({
@@ -136,7 +135,6 @@ export class ArticleController {
     }
   }
 
-  @Public()
   @Post('/remove-like')
   @ApiOperation({ summary: 'Method: removes like from article' })
   @ApiCreatedResponse({

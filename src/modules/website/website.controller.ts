@@ -95,7 +95,7 @@ export class WebsiteController {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  @Public()
+
   @Post('/add-like/:websiteId')
   @ApiOperation({ summary: 'Method: adds like to website' })
   @ApiCreatedResponse({
@@ -116,7 +116,6 @@ export class WebsiteController {
     }
   }
 
-  @Public()
   @Post('/remove-like/:websiteId')
   @ApiOperation({ summary: 'Method: removes like from website' })
   @ApiCreatedResponse({
