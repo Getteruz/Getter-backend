@@ -80,6 +80,17 @@ export class ArticleController {
     return this.articleService.getOne(id, cookies);
   }
 
+  @Public()
+  @Get('/category/:id')
+  @ApiOperation({ summary: 'Method: returns  articles by category id' })
+  @ApiOkResponse({
+    description: 'The articles was returned successfully',
+  })
+  @HttpCode(HttpStatus.OK)
+  async getArticleByCategoryId(@Param('id') id: string): Promise<Article[]> {
+    return this.articleService.getByCategoryId(id);
+  }
+
   @Post('/')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: creates new article' })

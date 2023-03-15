@@ -39,6 +39,9 @@ export class User extends BaseEntity {
   @Column()
   phone: string;
 
+  @Column()
+  description: string;
+
   @Column({ default: false })
   isEmailValid: boolean;
 

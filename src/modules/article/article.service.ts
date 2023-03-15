@@ -95,6 +95,21 @@ export class ArticleService {
     return article;
   }
 
+  async getByCategoryId(id: string) {
+    const articles = await this.articleRepository.find({
+      relations: {
+        user: {
+          avatar: true,
+          position: true,
+        },
+        avatar: true,
+      },
+      where: { category: { id } },
+    });
+
+    return articles;
+  }
+
   async deleteOne(id: string) {
     await this.deleteImage(id);
     const response = await this.articleRepository.delete(id);

@@ -38,6 +38,14 @@ class CreateUserDto {
   readonly phone: string;
 
   @ApiProperty({
+    description: `Description `,
+    example: 'I why fly ...',
+  })
+  @IsNotEmpty()
+  @IsString()
+  readonly description: string;
+
+  @ApiProperty({
     description: `Position id`,
     example: '734912fd-e011-4da6-b0a3-031fd82ab2f9',
   })
