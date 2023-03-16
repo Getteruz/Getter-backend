@@ -51,7 +51,7 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async getMe(@Req() request) {
-    return this.usersService.getById(request.user.id);
+    return this.usersService.getOne(request.user.id);
   }
 
   @Get('/')
