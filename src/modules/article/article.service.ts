@@ -104,7 +104,10 @@ export class ArticleService {
         },
         avatar: true,
       },
-      where: { category: { id } },
+      where: {
+        category: { id },
+        isActive: true,
+      },
     });
 
     return articles;
