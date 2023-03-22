@@ -17,6 +17,9 @@ export class Comment extends BaseEntity {
   @Column()
   text: string;
 
+  @Column({ type: 'timestamp', nullable: false, default: () => 'NOW()' })
+  date: string;
+
   @ManyToOne(() => Article, (article) => article.comments, {
     onDelete: 'CASCADE',
   })

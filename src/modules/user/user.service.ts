@@ -55,7 +55,9 @@ export class UsersService {
       relations: {
         avatar: true,
         position: true,
-        articles: true,
+        articles: {
+          avatar: true,
+        },
       },
       where: { id },
     });

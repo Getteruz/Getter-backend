@@ -51,7 +51,10 @@ export class ArticleService {
           position: true,
         },
         comments: {
-          user: true,
+          user: {
+            avatar: true,
+            position: true,
+          },
         },
         avatar: true,
         likes: true,
