@@ -156,7 +156,7 @@ export class UsersController {
   async verifyEmail(@Param('id') id: string, @Res() res: Response) {
     try {
       await this.usersService.setTrueEmail(id);
-      return res.redirect('http://localhost:3000/login');
+      return res.redirect('https://getter.uz/login');
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
