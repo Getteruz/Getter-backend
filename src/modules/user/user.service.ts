@@ -118,10 +118,10 @@ export class UsersService {
       await this.connection.transaction(async (manager: EntityManager) => {
         await manager.save(user);
       });
-      // await this.mailService.register({
-      //   ...user,
-      //   password: userData.password,
-      // });
+      await this.mailService.register({
+        ...user,
+        password: userData.password,
+      });
 
       const newUser = await this.getOne(user.id);
       return newUser;
@@ -160,12 +160,11 @@ export class UsersService {
   }
 
   async setTrueEmail(id) {
-    console.log(id);
-
     const user = await this.getOne(id);
     user.isEmailValid = true;
     await this.connection.transaction(async (manager: EntityManager) => {
       await manager.save(user);
     });
+    return user;
   }
 }

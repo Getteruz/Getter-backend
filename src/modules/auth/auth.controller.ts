@@ -24,6 +24,9 @@ import { LocalAuthGuard } from './passport-stratagies/local/local-auth.guard';
 import { ACCESS_TOKEN_USER } from './passport-stratagies/access-token-user/access-token-user.strategy';
 import { RefreshTokenUserGuard } from './passport-stratagies/refresh-token-user/refresh-token-user.guard';
 import { REFRESH_TOKEN_USER } from './passport-stratagies/refresh-token-user/refresh-token-user.strategy';
+import { HttpException } from '@nestjs/common/exceptions';
+import { HttpStatus } from '@nestjs/common/enums';
+import { userRoles } from '../../infra/shared/enum';
 
 const accessTokenOptions: CookieOptions = {
   secure: true,
@@ -58,6 +61,33 @@ export class AuthController {
     response.cookie(ACCESS_TOKEN_USER, accessToken, accessTokenOptions);
     response.cookie(REFRESH_TOKEN_USER, refreshToken, refreshTokenOptions);
     response.cookie('user_id', user.id, accessTokenOptions);
+  }
+
+  @Public()
+  @UseGuards(LocalAuthGuard)
+  @Post('/admin/login')
+  @HttpCode(200)
+  @ApiNoContentResponse({
+    description: 'New access, refresh tokens have been saved.',
+  })
+  @ApiBadRequestResponse({ description: 'Something went wrong from FE' })
+  async loginAdmin(
+    @Req() { user }: { user: User },
+    @Res({ passthrough: true }) response: Response,
+    @Body() _: LoginDto,
+  ) {
+    try {
+      if (user.role != userRoles.ADMIN) {
+        throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      }
+      const accessToken = this.authService.getJWT('access', user.id);
+      const refreshToken = this.authService.getJWT('refresh', user.id);
+      response.cookie(ACCESS_TOKEN_USER, accessToken, accessTokenOptions);
+      response.cookie(REFRESH_TOKEN_USER, refreshToken, refreshTokenOptions);
+      response.cookie('user_id', user.id, accessTokenOptions);
+    } catch (err) {
+      throw new HttpException(err.message, err.status);
+    }
   }
 
   @Public()

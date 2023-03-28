@@ -13,6 +13,7 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult, UpdateResult } from 'typeorm';
@@ -24,7 +25,7 @@ import {
   ApiOperation,
   ApiConsumes,
 } from '@nestjs/swagger';
-
+import { Response } from 'express';
 import {
   FileUploadValidationForCreate,
   FileUploadValidationForUpdate,
@@ -52,6 +53,21 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async getMe(@Req() request) {
     return this.usersService.getOne(request.user.id);
+  }
+
+  @Get('/:id')
+  @ApiOperation({ summary: 'Method: returns user by id' })
+  @ApiOkResponse({
+    description: 'The user was returned successfully',
+  })
+  @ApiForbiddenResponse({ description: 'Unauthorized Request' })
+  @HttpCode(HttpStatus.OK)
+  async getById(@Param('id') id: string) {
+    try {
+      return await this.usersService.getOne(id);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get('/')
@@ -135,10 +151,12 @@ export class UsersController {
     }
   }
 
-  @Post('/email/:id')
-  async verifyEmail(@Param('id') id: string) {
+  @Public()
+  @Get('/email/:id')
+  async verifyEmail(@Param('id') id: string, @Res() res: Response) {
     try {
-      return await this.usersService.setTrueEmail(id);
+      await this.usersService.setTrueEmail(id);
+      return res.redirect('http://localhost:3000/login');
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
