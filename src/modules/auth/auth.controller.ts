@@ -29,7 +29,7 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { userRoles } from '../../infra/shared/enum';
 
 const accessTokenOptions: CookieOptions = {
-  // secure: true,
+  secure: false,
   sameSite: 'none',
   maxAge: 31536000000,
 };

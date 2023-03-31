@@ -1,4 +1,10 @@
-import { IsString, MaxLength, IsEmail, IsOptional } from 'class-validator';
+import {
+  IsString,
+  MaxLength,
+  IsEmail,
+  IsOptional,
+  IsNumber,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 class UpdateUserDto {
@@ -27,6 +33,14 @@ class UpdateUserDto {
   @IsOptional()
   @IsString()
   readonly phone: string;
+
+  @ApiProperty({
+    description: `role`,
+    example: 1,
+  })
+  @IsOptional()
+  @IsNumber()
+  readonly role: number;
 
   @ApiProperty({
     description: `Position id`,
