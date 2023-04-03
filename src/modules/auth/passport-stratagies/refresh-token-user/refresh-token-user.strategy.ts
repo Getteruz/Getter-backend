@@ -19,7 +19,7 @@ export class RefreshTokenUserStrategy extends PassportStrategy(
   ) {
     const jwtConfig = configService.getOrThrow('jwt');
     super({
-      jwtFromRequest: (req: Request) => req.cookies[REFRESH_TOKEN_USER],
+      jwtFromRequest: (req: Request) => req.headers[REFRESH_TOKEN_USER],
       ignoreExpiration: false,
       secretOrKey: jwtConfig.refreshTokenSecret,
     });

@@ -61,6 +61,11 @@ export class AuthController {
     response.cookie(ACCESS_TOKEN_USER, accessToken, accessTokenOptions);
     response.cookie(REFRESH_TOKEN_USER, refreshToken, refreshTokenOptions);
     response.cookie('user_id', user.id, accessTokenOptions);
+    return {
+      accessToken,
+      refreshToken,
+      userId: user.id,
+    };
   }
 
   @Public()
@@ -85,6 +90,11 @@ export class AuthController {
       response.cookie(ACCESS_TOKEN_USER, accessToken, accessTokenOptions);
       response.cookie(REFRESH_TOKEN_USER, refreshToken, refreshTokenOptions);
       response.cookie('user_id', user.id, accessTokenOptions);
+      return {
+        accessToken,
+        refreshToken,
+        userId: user.id,
+      };
     } catch (err) {
       throw new HttpException(err.message, err.status);
     }
@@ -119,5 +129,10 @@ export class AuthController {
     response.cookie(ACCESS_TOKEN_USER, accessToken, accessTokenOptions);
     response.cookie(REFRESH_TOKEN_USER, refreshToken, refreshTokenOptions);
     response.cookie('user_id', user.id, accessTokenOptions);
+    return {
+      accessToken,
+      refreshToken,
+      userId: user.id,
+    };
   }
 }
