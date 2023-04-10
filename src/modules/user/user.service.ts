@@ -76,7 +76,7 @@ export class UsersService {
   }
 
   async deleteOne(id: string) {
-    //await this.deleteImage(id);
+    await this.deleteImage(id);
     const response = await this.usersRepository.delete(id);
     return response;
   }
