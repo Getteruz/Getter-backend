@@ -18,8 +18,7 @@ export class FileService {
       request.protocol +
       '://' +
       request.hostname +
-      '/' +
-      file.path.split('uploads\\')[1];
+      file.path.split('uploads')[1];
     const path = file.path;
 
     const newFile = new FileEntity();
@@ -48,8 +47,7 @@ export class FileService {
       request.protocol +
       '://' +
       request.hostname +
-      '/' +
-      file.path.split('uploads\\')[1];
+      file.path.split('uploads')[1];
     const path = file.path;
 
     changedFile.url = url;
