@@ -156,7 +156,9 @@ export class UsersService {
 
   async deleteImage(id: string) {
     const data = await this.getOne(id);
-    const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
+    if (data?.avatar?.id) {
+      const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
+    }
   }
 
   async setTrueEmail(id) {
