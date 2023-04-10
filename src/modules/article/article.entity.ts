@@ -51,7 +51,10 @@ export class Article extends BaseEntity {
   @JoinColumn()
   category: Category;
 
-  @ManyToOne(() => User, (user) => user.articles)
+  @ManyToOne(() => User, (user) => user.articles, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 
