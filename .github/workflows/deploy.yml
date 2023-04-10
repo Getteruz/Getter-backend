@@ -18,11 +18,11 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/user/getter/getter-admin
+            cd /home/user/getter/getter-backend
             git pull origin main
             git status
             npm install --yes
             rm -rf dist
             npm run build
             npm start
-            pm2 restart getter-admin
+            pm2 restart getter-backend
