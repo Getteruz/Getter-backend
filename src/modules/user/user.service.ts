@@ -113,6 +113,7 @@ export class UsersService {
       user.avatar = avatar;
       const position = await this.positionService.getOne(userData.position);
       user.position = position;
+      user.description = userData.description;
 
       await user.hashPassword(userData.password);
       await this.connection.transaction(async (manager: EntityManager) => {
