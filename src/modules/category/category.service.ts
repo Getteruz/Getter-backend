@@ -22,11 +22,7 @@ export class CategoryService {
     options?: IPaginationOptions,
     where?: FindOptionsWhere<Category>,
   ): Promise<Pagination<Category>> {
-    return paginate<Category>(this.categoryRepository, options, {
-      order: {
-        title: 'ASC',
-      },
-    });
+    return paginate<Category>(this.categoryRepository, options, {});
   }
 
   async getById(id: string) {
