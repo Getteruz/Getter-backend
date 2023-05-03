@@ -35,6 +35,14 @@ class UpdateUserDto {
   readonly phone: string;
 
   @ApiProperty({
+    description: `Description`,
+    example: 'ba.. ba.. ba..',
+  })
+  @IsOptional()
+  @IsString()
+  readonly description: string;
+
+  @ApiProperty({
     description: `role`,
     example: 1,
   })

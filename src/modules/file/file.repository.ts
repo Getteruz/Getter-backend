@@ -32,6 +32,7 @@ export class FileRepository {
       .insert()
       .into(FileEntity)
       .values(values as unknown as FileEntity)
+      .returning('id')
       .execute();
   }
 

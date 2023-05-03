@@ -15,10 +15,10 @@ export class FileEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   url: string;
 
-  @Column()
+  @Column({ nullable: true })
   path: string;
 
   @OneToOne(() => User, (user) => user.avatar)

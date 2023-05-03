@@ -32,16 +32,26 @@ export class FileService {
     return newFile;
   }
 
+  async createFile() {
+    const data = await this.fileRepository.create({ url: null, path: null });
+    const id = data.raw[0].id;
+    return await this.fileRepository.getById(id);
+  }
+
   async removeFile(id: string) {
     const file = await this.fileRepository.getById(id);
-    await this.deleteFileWithFs(file.path);
+    if (file.path) {
+      await this.deleteFileWithFs(file.path);
+    }
     await this.fileRepository.remove(id);
   }
 
   async updateFile(id: string, file: Express.Multer.File, request) {
     const changedFile = await this.fileRepository.getById(id);
 
-    await this.deleteFileWithFs(changedFile.path);
+    if (changedFile.path) {
+      await this.deleteFileWithFs(changedFile.path);
+    }
 
     const url =
       request.protocol +

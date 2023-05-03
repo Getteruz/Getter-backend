@@ -100,7 +100,7 @@ export class UsersController {
   )
   @HttpCode(HttpStatus.CREATED)
   async register(
-    @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
+    @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
     @Body() userData: CreateUserDto,
     @Req() request,
   ): Promise<User> {

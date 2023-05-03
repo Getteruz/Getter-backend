@@ -109,8 +109,13 @@ export class UsersService {
       user.email = userData.email;
       user.phone = userData.phone;
 
-      const avatar = await this.uploadImage(file, request);
-      user.avatar = avatar;
+      if (file) {
+        const avatar = await this.uploadImage(file, request);
+        user.avatar = avatar;
+      } else {
+        const avatar = await this.fileService.createFile();
+        user.avatar = avatar;
+      }
       const position = await this.positionService.getOne(userData.position);
       user.position = position;
       user.description = userData.description;
