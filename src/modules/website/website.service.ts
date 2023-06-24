@@ -87,15 +87,21 @@ export class WebsiteService {
     values: UpdateWebsiteDto,
     id: string,
     file: Express.Multer.File,
-    request,
+    req,
   ) {
-    const response = await this.websiteRepository.update({ id }, values);
-
     if (file) {
-      return await this.updateImage(file, id, request);
-    } else {
-      return response;
+      const avatar = await this.updateImage(file, id, req);
+      values.avatar = avatar;
     }
+
+    const response = await this.websiteRepository
+      .createQueryBuilder()
+      .update(Website)
+      .set(values as unknown as Website)
+      .where('id = :id', { id })
+      .execute();
+
+    return response;
   }
 
   async changeIsActive(isActive: boolean, id: string) {
@@ -103,16 +109,9 @@ export class WebsiteService {
     return data;
   }
 
-  async create(value: CreateWebsiteDto, request) {
+  async create(value: CreateWebsiteDto) {
     const response = this.websiteRepository.create(value);
-    const data = await this.websiteRepository.save(response);
-
-    return await this.uploadScreenShotImage(
-      value.link,
-      value.title,
-      data.id,
-      request,
-    );
+    return await this.websiteRepository.save(response);
   }
 
   async addLikeToWebsite(values: LikeDto) {
@@ -142,45 +141,22 @@ export class WebsiteService {
     return website;
   }
 
-  async uploadScreenShotImage(
-    link: string,
-    title: string,
-    id: string,
-    request,
-  ) {
-    const avatar = await this.fileService.uploadScreenshotWebsite(
-      link,
-      title,
-      request,
-    );
-    const data = await this.getOne(id);
-    data.avatar = avatar;
-
-    await this.connection.transaction(async (manager: EntityManager) => {
-      await manager.save(data);
-    });
-
-    return data;
-  }
-
   async updateImage(file: Express.Multer.File, id: string, request) {
     const data = await this.getOne(id);
-    const avatar = await this.fileService.updateFile(
-      data.avatar.id,
-      file,
-      request,
-    );
-    data.avatar = avatar;
+    let avatar;
+    if (data?.avatar?.id) {
+      avatar = await this.fileService.updateFile(data.avatar.id, file, request);
+    } else {
+      avatar = await this.fileService.uploadFile(file, request);
+    }
 
-    await this.connection.transaction(async (manager: EntityManager) => {
-      await manager.save(data);
-    });
-
-    return data;
+    return avatar;
   }
 
   async deleteImage(id: string) {
     const data = await this.getOne(id);
-    const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
+    if (data?.avatar?.id) {
+      await this.fileService.removeFile(data.avatar.id);
+    }
   }
 }

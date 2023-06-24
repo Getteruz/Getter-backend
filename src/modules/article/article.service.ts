@@ -126,8 +126,13 @@ export class ArticleService {
     values: UpdateArticleDto,
     id: string,
     file: Express.Multer.File,
-    request,
+    req,
   ) {
+    if (file) {
+      const avatar = await this.updateImage(file, id, req);
+      values.avatar = avatar;
+    }
+
     const response = await this.articleRepository
       .createQueryBuilder()
       .update(Article)
@@ -135,11 +140,7 @@ export class ArticleService {
       .where('id = :id', { id })
       .execute();
 
-    if (file) {
-      return await this.updateImage(file, id, request);
-    } else {
-      return response;
-    }
+    return response;
   }
 
   async changeIsActive(isActive: boolean, id: string) {
@@ -148,6 +149,10 @@ export class ArticleService {
   }
 
   async create(values: CreateArticleDto, file: Express.Multer.File, request) {
+    if (file) {
+      const avatar = await this.uploadImage(file, request);
+      values.avatar = avatar.id;
+    }
     const response = await this.articleRepository
       .createQueryBuilder()
       .insert()
@@ -156,13 +161,7 @@ export class ArticleService {
       .returning('id')
       .execute();
 
-    const id = response.raw[0].id;
-
-    if (file) {
-      return await this.uploadImage(file, id, request);
-    } else {
-      return response;
-    }
+    return response;
   }
 
   async addLikeToArticle(values: LikeArticleDto) {
@@ -192,36 +191,27 @@ export class ArticleService {
     return article;
   }
 
-  async uploadImage(file: Express.Multer.File, id: string, request) {
+  async uploadImage(file: Express.Multer.File, request) {
     const avatar = await this.fileService.uploadFile(file, request);
-    const data = await this.getById(id);
-    data.avatar = avatar;
-
-    await this.connection.transaction(async (manager: EntityManager) => {
-      await manager.save(data);
-    });
-
-    return data;
+    return avatar;
   }
 
   async updateImage(file: Express.Multer.File, id: string, request) {
     const data = await this.getById(id);
-    const avatar = await this.fileService.updateFile(
-      data.avatar.id,
-      file,
-      request,
-    );
-    data.avatar = avatar;
+    let avatar;
+    if (data?.avatar?.id) {
+      avatar = await this.fileService.updateFile(data.avatar.id, file, request);
+    } else {
+      avatar = await this.fileService.uploadFile(file, request);
+    }
 
-    await this.connection.transaction(async (manager: EntityManager) => {
-      await manager.save(data);
-    });
-
-    return data;
+    return avatar;
   }
 
   async deleteImage(id: string) {
     const data = await this.getById(id);
-    const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
+    if (data?.avatar?.id) {
+      await this.fileService.removeFile(data.avatar.id);
+    }
   }
 }

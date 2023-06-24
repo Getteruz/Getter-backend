@@ -98,7 +98,7 @@ export class ArticleController {
     description: 'The article was created successfully',
   })
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('avatar', {
       storage: MulterStorage('uploads/image/article'),
     }),
   )
@@ -162,7 +162,7 @@ export class ArticleController {
     description: 'Article was changed',
   })
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('avatar', {
       storage: MulterStorage('uploads/image/article'),
     }),
   )

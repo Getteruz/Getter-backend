@@ -4,7 +4,6 @@ import * as fs from 'fs';
 
 import { FileRepository } from './file.repository';
 import { FileEntity } from './file.entity';
-import { ScreenShotWebsite } from '../../infra/helpers';
 
 @Injectable()
 export class FileService {
@@ -78,28 +77,5 @@ export class FileService {
     } catch (err) {
       console.log(err);
     }
-  }
-
-  async uploadScreenshotWebsite(link: string, title: string, request) {
-    const name = title + `${new Date().getTime()}` + '.png';
-    const path = 'uploads/image/website/' + name;
-    const url =
-      request.protocol + '://' + request.hostname + '/image/website/' + name;
-
-    const newFile = new FileEntity();
-    newFile.path = path;
-    newFile.url = url;
-
-    await this.connection.transaction(async (manager: EntityManager) => {
-      await manager.save(newFile);
-    });
-
-    try {
-      await ScreenShotWebsite(link, path);
-    } catch (err) {
-      return newFile;
-    }
-
-    return newFile;
   }
 }

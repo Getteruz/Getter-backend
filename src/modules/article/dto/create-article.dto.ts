@@ -43,7 +43,7 @@ class CreateArticleDto {
     type: 'string',
     format: 'binary',
   })
-  readonly file: Express.Multer.File;
+  avatar:string
 
   @ApiProperty({
     description: `Category ID`,

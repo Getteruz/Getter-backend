@@ -92,18 +92,29 @@ export class PortfolioService {
     values: UpdatePortfolioDto,
     id: string,
     file: Express.Multer.File,
-    request,
+    req,
   ) {
-    const response = await this.portfolioRepository.update({ id }, values);
-
     if (file) {
-      return await this.updateImage(file, id, request);
-    } else {
-      return response;
+      const avatar = await this.updateImage(file, id, req);
+      values.avatar = avatar;
     }
+
+    const response = await this.portfolioRepository
+      .createQueryBuilder()
+      .update(Portfolio)
+      .set(values as unknown as Portfolio)
+      .where('id = :id', { id })
+      .execute();
+
+    return response;
   }
 
   async create(values: CreatePortfolioDto, file: Express.Multer.File, request) {
+    if (file) {
+      const avatar = await this.uploadImage(file, request);
+      values.avatar = avatar.id;
+    }
+
     const response = await this.portfolioRepository
       .createQueryBuilder()
       .insert()
@@ -112,13 +123,7 @@ export class PortfolioService {
       .returning('id')
       .execute();
 
-    const id = response.raw[0].id;
-
-    if (file) {
-      return await this.uploadImage(file, id, request);
-    } else {
-      return response;
-    }
+    return response
   }
 
   async addLikeToPortfolio(values: LikePortfolioDto) {
@@ -148,36 +153,27 @@ export class PortfolioService {
     return portfolio;
   }
 
-  async uploadImage(file: Express.Multer.File, id: string, request) {
+  async uploadImage(file: Express.Multer.File, request) {
     const avatar = await this.fileService.uploadFile(file, request);
-    const data = await this.getOne(id);
-    data.avatar = avatar;
-
-    await this.connection.transaction(async (manager: EntityManager) => {
-      await manager.save(data);
-    });
-
-    return data;
+    return avatar;
   }
 
   async updateImage(file: Express.Multer.File, id: string, request) {
     const data = await this.getOne(id);
-    const avatar = await this.fileService.updateFile(
-      data.avatar.id,
-      file,
-      request,
-    );
-    data.avatar = avatar;
+    let avatar;
+    if (data?.avatar?.id) {
+      avatar = await this.fileService.updateFile(data.avatar.id, file, request);
+    } else {
+      avatar = await this.fileService.uploadFile(file, request);
+    }
 
-    await this.connection.transaction(async (manager: EntityManager) => {
-      await manager.save(data);
-    });
-
-    return data;
+    return avatar;
   }
 
   async deleteImage(id: string) {
     const data = await this.getOne(id);
-    const deletedAvatar = await this.fileService.removeFile(data.avatar.id);
+    if (data?.avatar?.id) {
+      await this.fileService.removeFile(data.avatar.id);
+    }
   }
 }

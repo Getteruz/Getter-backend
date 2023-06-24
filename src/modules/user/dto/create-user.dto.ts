@@ -9,7 +9,7 @@ class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(64)
-  readonly password: string;
+  password: string;
 
   @ApiProperty({
     description: `Name`,
@@ -59,8 +59,7 @@ class CreateUserDto {
     type: 'string',
     format: 'binary',
   })
-  //@IsNotEmpty()
-  readonly file: Express.Multer.File;
+  avatar;
 }
 
 export default CreateUserDto;

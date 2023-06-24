@@ -66,7 +66,7 @@ class UpdateUserDto {
   })
   @IsOptional()
   @IsString()
-  readonly file: Express.Multer.File;
+  avatar;
 }
 
 export default UpdateUserDto;

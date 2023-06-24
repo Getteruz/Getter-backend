@@ -43,7 +43,7 @@ class UpdateArticleDto {
     format: 'binary',
   })
   @IsOptional()
-  readonly file: Express.Multer.File;
+  avatar;
 
   @ApiProperty({
     description: `Category ID`,

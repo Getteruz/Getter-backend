@@ -32,7 +32,7 @@ class CreatePortfolioDto {
     type: 'string',
     format: 'binary',
   })
-  readonly file: Express.Multer.File;
+  avatar;
 }
 
 export default CreatePortfolioDto;

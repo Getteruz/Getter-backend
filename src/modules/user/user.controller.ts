@@ -94,7 +94,7 @@ export class UsersController {
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('avatar', {
       storage: MulterStorage('uploads/image/user'),
     }),
   )
@@ -118,7 +118,7 @@ export class UsersController {
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('avatar', {
       storage: MulterStorage('uploads/image/user'),
     }),
   )

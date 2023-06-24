@@ -80,7 +80,7 @@ export class PortfolioController {
     description: 'The portfolio was created successfully',
   })
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('avatar', {
       storage: MulterStorage('uploads/image/portfolio'),
     }),
   )
@@ -145,7 +145,7 @@ export class PortfolioController {
     description: 'Portfolio was changed',
   })
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('avatar', {
       storage: MulterStorage('uploads/image/portfolio'),
     }),
   )

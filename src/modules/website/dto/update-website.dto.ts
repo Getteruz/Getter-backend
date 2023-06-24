@@ -32,7 +32,7 @@ class UpdateWebsiteDto {
     format: 'binary',
   })
   @IsOptional()
-  readonly file: Express.Multer.File;
+  avatar
 }
 
 export default UpdateWebsiteDto;

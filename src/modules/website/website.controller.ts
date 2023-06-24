@@ -85,12 +85,9 @@ export class WebsiteController {
     description: 'The website was created successfully',
   })
   @HttpCode(HttpStatus.CREATED)
-  async saveData(
-    @Body() data: CreateWebsiteDto,
-    @Req() request: Request,
-  ): Promise<Website> {
+  async saveData(@Body() data: CreateWebsiteDto): Promise<Website> {
     try {
-      return await this.websiteService.create(data, request);
+      return await this.websiteService.create(data);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -144,7 +141,7 @@ export class WebsiteController {
     description: 'Website was changed',
   })
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('avatar', {
       storage: MulterStorage('uploads/image/website'),
     }),
   )
