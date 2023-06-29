@@ -18,6 +18,7 @@ import { Comment } from '../comment/comment.entity';
 import { FileEntity } from '../file/file.entity';
 import { Website } from '../website/website.entity';
 import { Portfolio } from '../portfolio/portfolio.entity';
+import { RepliedComment } from '../replied-comment/replied-comment.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -59,6 +60,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToMany(() => RepliedComment, (repliedComment) => repliedComment.user)
+  repliedComments: RepliedComment[];
 
   @OneToOne(() => FileEntity, (file) => file.user, {
     onDelete: 'SET NULL',

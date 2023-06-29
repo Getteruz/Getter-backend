@@ -16,6 +16,7 @@ import { PortfolioModule } from './modules/portfolio/portfolio.module';
 import { PositionModule } from './modules/position/position.module';
 import { UserModule } from './modules/user/user.module';
 import { WebsiteModule } from './modules/website/website.module';
+import { RepliedCommentModule } from './modules/replied-comment/replied-comment.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { WebsiteModule } from './modules/website/website.module';
     OrderModule,
     PortfolioModule,
     PositionModule,
+    RepliedCommentModule,
     UserModule,
     WebsiteModule,
   ],
