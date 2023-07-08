@@ -46,11 +46,7 @@ export class RepliedCommentController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async getData() {
-    try {
-      return await this.repliedCommentService.getAll();
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.repliedCommentService.getAll();
   }
 
   @Post('/')
@@ -61,11 +57,7 @@ export class RepliedCommentController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() data: CreateRepliedCommentDto) {
-    try {
-      return await this.repliedCommentService.create(data);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.repliedCommentService.create(data);
   }
 
   @Put('/:id')
@@ -79,11 +71,7 @@ export class RepliedCommentController {
     @Body() userData: UpdateRepliedCommentDto,
     @Param('id') id: string,
   ): Promise<UpdateResult> {
-    try {
-      return await this.repliedCommentService.update(userData, id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.repliedCommentService.update(userData, id);
   }
 
   @Delete('/:id')
@@ -94,10 +82,6 @@ export class RepliedCommentController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string) {
-    try {
-      return await this.repliedCommentService.delete(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.repliedCommentService.delete(id);
   }
 }

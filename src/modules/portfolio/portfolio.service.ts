@@ -4,7 +4,7 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
-import { FindOptionsWhere } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -13,7 +13,6 @@ import {
   CreatePortfolioDto,
   LikePortfolioDto,
 } from './dto';
-import { PortfolioRepository } from './portfolio.repository';
 import { FileService } from '../file/file.service';
 import { Portfolio } from './portfolio.entity';
 import { UsersService } from '../user/user.service';
@@ -22,7 +21,7 @@ import { UsersService } from '../user/user.service';
 export class PortfolioService {
   constructor(
     @InjectRepository(Portfolio)
-    private readonly portfolioRepository: PortfolioRepository,
+    private readonly portfolioRepository: Repository<Portfolio>,
     private readonly fileService: FileService,
     private readonly connection: DataSource,
     private readonly userService: UsersService,

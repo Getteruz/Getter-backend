@@ -4,12 +4,11 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
-import { FindOptionsWhere } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { UpdateArticleDto, CreateArticleDto, LikeArticleDto } from './dto';
-import { ArticleRepository } from './article.repository';
 import { FileService } from '../file/file.service';
 import { Article } from './article.entity';
 import { UsersService } from '../user/user.service';
@@ -18,7 +17,7 @@ import { UsersService } from '../user/user.service';
 export class ArticleService {
   constructor(
     @InjectRepository(Article)
-    private readonly articleRepository: ArticleRepository,
+    private readonly articleRepository: Repository<Article>,
     private readonly fileService: FileService,
     private readonly connection: DataSource,
     private readonly userService: UsersService,

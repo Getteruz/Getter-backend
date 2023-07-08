@@ -54,11 +54,7 @@ export class CategoryController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
-    try {
-      return await this.categoryService.getAll({ ...query, route });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.categoryService.getAll({ ...query, route });
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -70,11 +66,7 @@ export class CategoryController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() categoryData: CreateCategoryDto) {
-    try {
-      return await this.categoryService.create(categoryData);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.categoryService.create(categoryData);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -89,11 +81,7 @@ export class CategoryController {
     @Body() userData: UpdateCategoryDto,
     @Param('id') id: string,
   ): Promise<UpdateResult> {
-    try {
-      return await this.categoryService.update(userData, id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.categoryService.update(userData, id);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -105,10 +93,6 @@ export class CategoryController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string) {
-    try {
-      return await this.categoryService.delete(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.categoryService.delete(id);
   }
 }

@@ -49,22 +49,18 @@ export class WebsiteController {
   })
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
-    try {
-      let where;
-      if (query.isActive == 'true') {
-        where = { isActive: true };
-      } else if (query.isActive == 'false') {
-        where = { isActive: false };
-      } else {
-        where = {};
-      }
-      return await this.websiteService.getAll(
-        { limit: query.limit, page: query.page, route },
-        where,
-      );
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    let where;
+    if (query.isActive == 'true') {
+      where = { isActive: true };
+    } else if (query.isActive == 'false') {
+      where = { isActive: false };
+    } else {
+      where = {};
     }
+    return await this.websiteService.getAll(
+      { limit: query.limit, page: query.page, route },
+      where,
+    );
   }
 
   @Public()
@@ -86,11 +82,7 @@ export class WebsiteController {
   })
   @HttpCode(HttpStatus.CREATED)
   async saveData(@Body() data: CreateWebsiteDto): Promise<Website> {
-    try {
-      return await this.websiteService.create(data);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.websiteService.create(data);
   }
 
   @Post('/add-like/:websiteId')
@@ -103,14 +95,10 @@ export class WebsiteController {
     @Req() request,
     @Param('websiteId') id: string,
   ): Promise<Website> {
-    try {
-      return await this.websiteService.addLikeToWebsite({
-        websiteId: id,
-        userId: request.user.id,
-      });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.websiteService.addLikeToWebsite({
+      websiteId: id,
+      userId: request.user.id,
+    });
   }
 
   @Post('/remove-like/:websiteId')
@@ -123,14 +111,10 @@ export class WebsiteController {
     @Req() request,
     @Param('websiteId') id: string,
   ): Promise<Website> {
-    try {
-      return await this.websiteService.removeLikeFromWebsite({
-        websiteId: id,
-        userId: request.user.id,
-      });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.websiteService.removeLikeFromWebsite({
+      websiteId: id,
+      userId: request.user.id,
+    });
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -152,11 +136,7 @@ export class WebsiteController {
     @Param('id') id: string,
     @Req() request,
   ): Promise<UpdateResult | Website> {
-    try {
-      return await this.websiteService.change(data, id, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.websiteService.change(data, id, file, request);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -170,11 +150,7 @@ export class WebsiteController {
     @Body() data: { isActive: boolean },
     @Param('id') id: string,
   ): Promise<UpdateResult> {
-    try {
-      return await this.websiteService.changeIsActive(data.isActive, id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.websiteService.changeIsActive(data.isActive, id);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -185,10 +161,6 @@ export class WebsiteController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string): Promise<DeleteResult> {
-    try {
-      return await this.websiteService.deleteOne(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.websiteService.deleteOne(id);
   }
 }

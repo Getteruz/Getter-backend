@@ -4,18 +4,17 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
-import { FindOptionsWhere } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
-import { CategoryRepository } from './category.repository';
 import { Category } from './category.entity';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
-    private readonly categoryRepository: CategoryRepository,
+    private readonly categoryRepository: Repository<Category>,
   ) {}
 
   async getAll(

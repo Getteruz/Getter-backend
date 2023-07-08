@@ -45,11 +45,7 @@ export class FileController {
     @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
     @Req() request,
   ) {
-    try {
-      return await this.fileService.uploadFile(file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.fileService.uploadFile(file, request);
   }
 
   @Delete('/remove-file/:id')
@@ -59,10 +55,6 @@ export class FileController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string) {
-    try {
-      return await this.fileService.removeFile(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.fileService.removeFile(id);
   }
 }

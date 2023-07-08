@@ -5,13 +5,12 @@ import { UserModule } from '../user/user.module';
 
 import { WebsiteController } from './website.controller';
 import { Website } from './website.entity';
-import { WebsiteRepository } from './website.repository';
 import { WebsiteService } from './website.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Website]), FileModule, UserModule],
   controllers: [WebsiteController],
-  providers: [WebsiteService, WebsiteRepository],
-  exports: [WebsiteService, WebsiteRepository],
+  providers: [WebsiteService],
+  exports: [WebsiteService],
 })
 export class WebsiteModule {}

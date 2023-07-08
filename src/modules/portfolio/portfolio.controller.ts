@@ -54,11 +54,7 @@ export class PortfolioController {
   })
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
-    try {
-      return await this.portfolioService.getAll({ ...query, route });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.portfolioService.getAll({ ...query, route });
   }
 
   @Public()
@@ -90,11 +86,7 @@ export class PortfolioController {
     @Body() data: CreatePortfolioDto,
     @Req() request,
   ): Promise<InsertResult | Portfolio> {
-    try {
-      return await this.portfolioService.create(data, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.portfolioService.create(data, file, request);
   }
 
   @Post('/add-like/:portfolioId')
@@ -107,14 +99,10 @@ export class PortfolioController {
     @Req() request,
     @Param('portfolioId') id: string,
   ): Promise<Portfolio> {
-    try {
-      return await this.portfolioService.addLikeToPortfolio({
-        portfolioId: id,
-        userId: request.user.id,
-      });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.portfolioService.addLikeToPortfolio({
+      portfolioId: id,
+      userId: request.user.id,
+    });
   }
 
   @Post('/remove-like/:portfolioId')
@@ -127,14 +115,10 @@ export class PortfolioController {
     @Req() request,
     @Param('portfolioId') id: string,
   ): Promise<Portfolio> {
-    try {
-      return await this.portfolioService.removeLikeFromPortfolio({
-        portfolioId: id,
-        userId: request.user.id,
-      });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.portfolioService.removeLikeFromPortfolio({
+      portfolioId: id,
+      userId: request.user.id,
+    });
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -156,11 +140,7 @@ export class PortfolioController {
     @Param('id') id: string,
     @Req() request,
   ): Promise<UpdateResult | Portfolio> {
-    try {
-      return await this.portfolioService.change(data, id, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.portfolioService.change(data, id, file, request);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -171,10 +151,6 @@ export class PortfolioController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string): Promise<DeleteResult> {
-    try {
-      return await this.portfolioService.deleteOne(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.portfolioService.deleteOne(id);
   }
 }

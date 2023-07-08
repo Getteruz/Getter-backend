@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { FindOptionsWhere } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   IPaginationOptions,
   Pagination,
@@ -8,14 +8,13 @@ import {
 
 import { UpdatePositionDto, CreatePositionDto } from './dto';
 import { Position } from './position.entity';
-import { PositionRepository } from './position.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PositionService {
   constructor(
     @InjectRepository(Position)
-    private readonly positionRepository: PositionRepository,
+    private readonly positionRepository: Repository<Position>,
   ) {}
 
   async getAll(

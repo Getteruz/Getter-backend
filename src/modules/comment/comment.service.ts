@@ -3,14 +3,14 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateCommentDto, UpdateCommentDto } from './dto';
-import { CommentRepository } from './comment.repository';
 import { Comment } from './comment.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectRepository(Comment)
-    private readonly commentRepository: CommentRepository,
+    private readonly commentRepository: Repository<Comment>,
   ) {}
 
   async getAll() {

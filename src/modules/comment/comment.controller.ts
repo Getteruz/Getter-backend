@@ -46,11 +46,7 @@ export class CommentController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async getData() {
-    try {
-      return await this.commentService.getAll();
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.commentService.getAll();
   }
 
   @Post('/')
@@ -61,11 +57,7 @@ export class CommentController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() categoryData: CreateCommentDto) {
-    try {
-      return await this.commentService.create(categoryData);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.commentService.create(categoryData);
   }
 
   @Put('/:id')
@@ -79,11 +71,7 @@ export class CommentController {
     @Body() userData: UpdateCommentDto,
     @Param('id') id: string,
   ): Promise<UpdateResult> {
-    try {
-      return await this.commentService.update(userData, id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.commentService.update(userData, id);
   }
 
   @Delete('/:id')
@@ -94,10 +82,6 @@ export class CommentController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string) {
-    try {
-      return await this.commentService.delete(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.commentService.delete(id);
   }
 }

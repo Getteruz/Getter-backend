@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import {
   IPaginationOptions,
   Pagination,
@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileService } from '../file/file.service';
 import { UpdateWebsiteDto, CreateWebsiteDto, LikeDto } from './dto';
-import { WebsiteRepository } from './website.repository';
 import { Website } from './website.entity';
 import { UsersService } from '../user/user.service';
 
@@ -17,7 +16,7 @@ import { UsersService } from '../user/user.service';
 export class WebsiteService {
   constructor(
     @InjectRepository(Website)
-    private readonly websiteRepository: WebsiteRepository,
+    private readonly websiteRepository: Repository<Website>,
     private readonly fileService: FileService,
     private readonly connection: DataSource,
     private readonly userService: UsersService,

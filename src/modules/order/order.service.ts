@@ -4,11 +4,10 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { UpdateOrderDto, CreateOrderDto } from './dto';
-import { OrderRepository } from './order.repository';
 import { FileService } from '../file/file.service';
 import { Order } from './order.entity';
 
@@ -16,7 +15,7 @@ import { Order } from './order.entity';
 export class OrderService {
   constructor(
     @InjectRepository(Order)
-    private readonly orderRepository: OrderRepository,
+    private readonly orderRepository: Repository<Order>,
     private readonly fileService: FileService,
     private readonly connection: DataSource,
   ) {}
@@ -54,7 +53,12 @@ export class OrderService {
     return response;
   }
 
-  async change(values: UpdateOrderDto, id: string, file: Express.Multer.File,request) {
+  async change(
+    values: UpdateOrderDto,
+    id: string,
+    file: Express.Multer.File,
+    request,
+  ) {
     const response = await this.orderRepository
       .createQueryBuilder()
       .update(Order)
@@ -63,7 +67,7 @@ export class OrderService {
       .execute();
 
     if (file) {
-      return await this.updateImage(file, id,request);
+      return await this.updateImage(file, id, request);
     } else {
       return response;
     }

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import {
   IPaginationOptions,
   Pagination,
@@ -9,7 +9,6 @@ import {
 import { FindOptionsWhere } from 'typeorm';
 
 import { CreateUserDto, UpdateUserDto } from './dto';
-import { UsersRepository } from './user.repository';
 import { User } from './user.entity';
 import { MailService } from '../mail/mail.service';
 import { FileService } from '../file/file.service';
@@ -21,7 +20,7 @@ import { hashPassword } from '../../infra/helpers';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: Repository<User>,
     private readonly mailService: MailService,
     private readonly connection: DataSource,
     private readonly fileService: FileService,

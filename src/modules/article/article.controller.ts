@@ -51,22 +51,18 @@ export class ArticleController {
   })
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
-    try {
-      let where;
-      if (query.isActive == 'true') {
-        where = { isActive: true };
-      } else if (query.isActive == 'false') {
-        where = { isActive: false };
-      } else {
-        where = {};
-      }
-      return await this.articleService.getAll(
-        { limit: query.limit, page: query.page, route },
-        where,
-      );
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    let where;
+    if (query.isActive == 'true') {
+      where = { isActive: true };
+    } else if (query.isActive == 'false') {
+      where = { isActive: false };
+    } else {
+      where = {};
     }
+    return await this.articleService.getAll(
+      { limit: query.limit, page: query.page, route },
+      where,
+    );
   }
 
   @Public()
@@ -108,11 +104,7 @@ export class ArticleController {
     @Body() data: CreateArticleDto,
     @Req() request,
   ): Promise<InsertResult | Article> {
-    try {
-      return await this.articleService.create(data, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.articleService.create(data, file, request);
   }
 
   @Post('/add-like/:articleId')
@@ -125,14 +117,10 @@ export class ArticleController {
     @Req() request,
     @Param('articleId') articleId: string,
   ): Promise<Article> {
-    try {
-      return await this.articleService.addLikeToArticle({
-        userId: request.user.id,
-        articleId,
-      });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.articleService.addLikeToArticle({
+      userId: request.user.id,
+      articleId,
+    });
   }
 
   @Post('/remove-like')
@@ -145,14 +133,10 @@ export class ArticleController {
     @Req() request,
     @Param('articleId') articleId: string,
   ): Promise<Article> {
-    try {
-      return await this.articleService.removeLikeFromArticle({
-        userId: request.user.id,
-        articleId,
-      });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.articleService.removeLikeFromArticle({
+      userId: request.user.id,
+      articleId,
+    });
   }
 
   @Patch('/:id')
@@ -173,11 +157,7 @@ export class ArticleController {
     @Param('id') id: string,
     @Req() request,
   ): Promise<UpdateResult | Article> {
-    try {
-      return await this.articleService.change(data, id, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.articleService.change(data, id, file, request);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -191,11 +171,7 @@ export class ArticleController {
     @Body() data: { isActive: boolean },
     @Param('id') id: string,
   ): Promise<UpdateResult> {
-    try {
-      return await this.articleService.changeIsActive(data.isActive, id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.articleService.changeIsActive(data.isActive, id);
   }
 
   @Delete('/:id')
@@ -205,10 +181,6 @@ export class ArticleController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string): Promise<DeleteResult> {
-    try {
-      return await this.articleService.deleteOne(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.articleService.deleteOne(id);
   }
 }

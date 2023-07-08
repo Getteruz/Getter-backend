@@ -51,22 +51,18 @@ export class OrderController {
   })
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
-    try {
-      let where;
-      if (query.isActive == 'true') {
-        where = { isActive: true };
-      } else if (query.isActive == 'false') {
-        where = { isActive: false };
-      } else {
-        where = {};
-      }
-      return await this.orderService.getAll(
-        { limit: query.limit, page: query.page, route },
-        where,
-      );
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    let where;
+    if (query.isActive == 'true') {
+      where = { isActive: true };
+    } else if (query.isActive == 'false') {
+      where = { isActive: false };
+    } else {
+      where = {};
     }
+    return await this.orderService.getAll(
+      { limit: query.limit, page: query.page, route },
+      where,
+    );
   }
 
   @Public()
@@ -98,11 +94,7 @@ export class OrderController {
     @Body() data: CreateOrderDto,
     @Req() request,
   ): Promise<InsertResult | Order> {
-    try {
-      return await this.orderService.create(data, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.orderService.create(data, file, request);
   }
 
   @Patch('/:id')
@@ -123,11 +115,7 @@ export class OrderController {
     @Param('id') id: string,
     @Req() request,
   ): Promise<UpdateResult | Order> {
-    try {
-      return await this.orderService.change(data, id, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.orderService.change(data, id, file, request);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -138,10 +126,6 @@ export class OrderController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string): Promise<DeleteResult> {
-    try {
-      return await this.orderService.deleteOne(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.orderService.deleteOne(id);
   }
 }

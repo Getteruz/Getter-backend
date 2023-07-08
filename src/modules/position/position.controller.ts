@@ -41,11 +41,7 @@ export class PositionController {
   })
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
-    try {
-      return await this.positionService.getAll({ ...query, route });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.positionService.getAll({ ...query, route });
   }
 
   @Public()
@@ -67,11 +63,7 @@ export class PositionController {
   })
   @HttpCode(HttpStatus.CREATED)
   async saveData(@Body() positionData: CreatePositionDto): Promise<Position> {
-    try {
-      return await this.positionService.create(positionData);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.positionService.create(positionData);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -85,11 +77,7 @@ export class PositionController {
     @Body() positionData: UpdatePositionDto,
     @Param('id') id: string,
   ): Promise<UpdateResult> {
-    try {
-      return await this.positionService.change(positionData, id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.positionService.change(positionData, id);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)
@@ -100,10 +88,6 @@ export class PositionController {
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string) {
-    try {
-      return await this.positionService.deleteOne(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.positionService.deleteOne(id);
   }
 }

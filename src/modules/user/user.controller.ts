@@ -63,11 +63,7 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async getById(@Param('id') id: string) {
-    try {
-      return await this.usersService.getOne(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.usersService.getOne(id);
   }
 
   @Get('/')
@@ -78,11 +74,7 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
   async getData(@Route() route: string, @Query() query: PaginationDto) {
-    try {
-      return await this.usersService.getAll({ ...query, route });
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.usersService.getAll({ ...query, route });
   }
 
   @Public()
@@ -104,11 +96,7 @@ export class UsersController {
     @Body() userData: CreateUserDto,
     @Req() request,
   ): Promise<User> {
-    try {
-      return await this.usersService.create(userData, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.usersService.create(userData, file, request);
   }
 
   @Put('/:id')
@@ -129,11 +117,7 @@ export class UsersController {
     @Param('id') id: string,
     @Req() request,
   ): Promise<UpdateResult | User> {
-    try {
-      return await this.usersService.change(userData, id, file, request);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.usersService.change(userData, id, file, request);
   }
 
   @Delete('/:id')
@@ -144,21 +128,13 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteData(@Param('id') id: string): Promise<DeleteResult> {
-    try {
-      return await this.usersService.deleteOne(id);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return await this.usersService.deleteOne(id);
   }
 
   @Public()
   @Get('/email/:id')
   async verifyEmail(@Param('id') id: string, @Res() res: Response) {
-    try {
-      await this.usersService.setTrueEmail(id);
-      return res.redirect('https://getter.uz/auth/login');
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    await this.usersService.setTrueEmail(id);
+    return res.redirect('https://getter.uz/auth/login');
   }
 }

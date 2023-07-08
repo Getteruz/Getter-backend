@@ -6,7 +6,6 @@ import { PositionModule } from '../position/position.module';
 
 import { UsersController } from './user.controller';
 import { User } from './user.entity';
-import { UsersRepository } from './user.repository';
 import { UsersService } from './user.service';
 
 @Module({
@@ -17,7 +16,7 @@ import { UsersService } from './user.service';
     PositionModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository],
-  exports: [UsersService, UsersRepository],
+  providers: [UsersService],
+  exports: [UsersService],
 })
 export class UserModule {}
