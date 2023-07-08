@@ -21,20 +21,24 @@ export class OurServiceService {
     options?: IPaginationOptions,
     where?: FindOptionsWhere<OurService>,
   ): Promise<Pagination<OurService>> {
-    return paginate<OurService>(this.ourServiceRepository, options, {});
+    return paginate<OurService>(this.ourServiceRepository, options, {
+      relations: {
+        subServices: true,
+      },
+    });
   }
 
   async getById(id: string) {
-    const category = await this.ourServiceRepository.findOne({
-      relations: {},
+    const data = await this.ourServiceRepository.findOne({
+      relations: { subServices: true },
       where: { id },
     });
 
-    if (!category) {
+    if (!data) {
       throw new HttpException('Data not found', HttpStatus.NOT_FOUND);
     }
 
-    return category;
+    return data;
   }
 
   async delete(id: string) {

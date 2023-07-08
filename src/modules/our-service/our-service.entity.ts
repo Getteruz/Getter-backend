@@ -5,6 +5,7 @@ import {
   BaseEntity,
   OneToMany,
 } from 'typeorm';
+import { SubService } from '../sub-service/sub-service.entity';
 
 @Entity({ name: 'our_service' })
 export class OurService extends BaseEntity {
@@ -16,4 +17,7 @@ export class OurService extends BaseEntity {
 
   @Column()
   description: string;
+
+  @OneToMany(() => SubService, (subService) => subService.ourService)
+  subServices: SubService[];
 }

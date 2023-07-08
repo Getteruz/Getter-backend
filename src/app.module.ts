@@ -18,6 +18,7 @@ import { UserModule } from './modules/user/user.module';
 import { WebsiteModule } from './modules/website/website.module';
 import { RepliedCommentModule } from './modules/replied-comment/replied-comment.module';
 import { OurServiceModule } from './modules/our-service/our-service.module';
+import { SubServiceModule } from './modules/sub-service/sub-service.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { OurServiceModule } from './modules/our-service/our-service.module';
     PortfolioModule,
     PositionModule,
     RepliedCommentModule,
+    SubServiceModule,
     UserModule,
     WebsiteModule,
   ],
