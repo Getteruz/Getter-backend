@@ -17,6 +17,7 @@ import { PositionModule } from './modules/position/position.module';
 import { UserModule } from './modules/user/user.module';
 import { WebsiteModule } from './modules/website/website.module';
 import { RepliedCommentModule } from './modules/replied-comment/replied-comment.module';
+import { OurServiceModule } from './modules/our-service/our-service.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { RepliedCommentModule } from './modules/replied-comment/replied-comment.
     FileModule,
     MailModule,
     OrderModule,
+    OurServiceModule,
     PortfolioModule,
     PositionModule,
     RepliedCommentModule,
