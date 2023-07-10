@@ -43,7 +43,7 @@ class CreateArticleDto {
     type: 'string',
     format: 'binary',
   })
-  avatar:string
+  avatar;
 
   @ApiProperty({
     description: `Category ID`,

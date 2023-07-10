@@ -12,6 +12,7 @@ import { UpdateArticleDto, CreateArticleDto, LikeArticleDto } from './dto';
 import { FileService } from '../file/file.service';
 import { Article } from './article.entity';
 import { UsersService } from '../user/user.service';
+import { CategoryService } from '../category/category.service';
 
 @Injectable()
 export class ArticleService {
@@ -21,6 +22,7 @@ export class ArticleService {
     private readonly fileService: FileService,
     private readonly connection: DataSource,
     private readonly userService: UsersService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async getAll(
@@ -126,17 +128,7 @@ export class ArticleService {
     return response;
   }
 
-  async change(
-    values: UpdateArticleDto,
-    id: string,
-    file: Express.Multer.File,
-    req,
-  ) {
-    if (file) {
-      const avatar = await this.updateImage(file, id, req);
-      values.avatar = avatar;
-    }
-
+  async change(values: UpdateArticleDto, id: string) {
     const response = await this.articleRepository
       .createQueryBuilder()
       .update(Article)
@@ -152,20 +144,28 @@ export class ArticleService {
     return data;
   }
 
-  async create(values: CreateArticleDto, file: Express.Multer.File, request) {
-    if (file) {
-      const avatar = await this.uploadImage(file, request);
-      values.avatar = avatar.id;
+  async create(
+    values: CreateArticleDto,
+    files: Express.Multer.File[],
+    request,
+  ) {
+    if (files.length) {
+      values.avatar = [];
+      for (let file of files) {
+        const avatar = await this.uploadImage(file, request);
+        values.avatar.push(avatar);
+      }
     }
-    const response = await this.articleRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Article)
-      .values(values as unknown as Article)
-      .returning('id')
-      .execute();
 
-    return response;
+    const category = await this.categoryService.getById(values.category);
+    const user = await this.userService.getById(values.user);
+    const response = this.articleRepository.create({
+      ...values,
+      user,
+      category,
+    });
+
+    return await this.articleRepository.save(response);
   }
 
   async addLikeToArticle(values: LikeArticleDto) {
@@ -195,27 +195,36 @@ export class ArticleService {
     return article;
   }
 
+  async updateAvatar(id: string, file: Express.Multer.File, req) {
+    await this.updateImage(file, id, req);
+  }
+
+  async uploadAvatar(id: string, file: Express.Multer.File, req) {
+    const avatar = await this.uploadImage(file, req);
+    const article = await this.articleRepository.findOne({
+      where: { id },
+      relations: { avatar: true },
+    });
+    article.avatar.push(avatar);
+    return await this.articleRepository.save(article);
+  }
+
   async uploadImage(file: Express.Multer.File, request) {
     const avatar = await this.fileService.uploadFile(file, request);
     return avatar;
   }
 
   async updateImage(file: Express.Multer.File, id: string, request) {
-    const data = await this.getById(id);
-    let avatar;
-    if (data?.avatar?.id) {
-      avatar = await this.fileService.updateFile(data.avatar.id, file, request);
-    } else {
-      avatar = await this.fileService.uploadFile(file, request);
-    }
-
+    const avatar = await this.fileService.updateFile(id, file, request);
     return avatar;
   }
 
   async deleteImage(id: string) {
     const data = await this.getById(id);
-    if (data?.avatar?.id) {
-      await this.fileService.removeFile(data.avatar.id);
+    if (data?.avatar?.length) {
+      for (let avatar of data?.avatar) {
+        await this.fileService.removeFile(avatar.id);
+      }
     }
   }
 }
