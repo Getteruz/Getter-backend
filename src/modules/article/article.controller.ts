@@ -13,8 +13,9 @@ import {
   UploadedFile,
   Query,
   Req,
+  UploadedFiles,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import {
   ApiCreatedResponse,
@@ -94,17 +95,37 @@ export class ArticleController {
     description: 'The article was created successfully',
   })
   @UseInterceptors(
-    FileInterceptor('avatar', {
+    FilesInterceptor('avatar', 2, {
       storage: MulterStorage('uploads/image/article'),
     }),
   )
   @HttpCode(HttpStatus.CREATED)
   async saveData(
-    @UploadedFile(FileUploadValidationForCreate) file: Express.Multer.File,
+    @UploadedFiles() files,
     @Body() data: CreateArticleDto,
     @Req() request,
   ): Promise<InsertResult | Article> {
-    return await this.articleService.create(data, file, request);
+    return await this.articleService.create(data, files, request);
+  }
+
+  @Post('/avatar/:id')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Method: creates new article avatar' })
+  @ApiCreatedResponse({
+    description: 'The article avatar was created successfully',
+  })
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: MulterStorage('uploads/image/article'),
+    }),
+  )
+  @HttpCode(HttpStatus.CREATED)
+  async uploadAvatar(
+    @UploadedFile() file,
+    @Param('id') id: string,
+    @Req() request,
+  ): Promise<InsertResult | Article> {
+    return await this.articleService.uploadAvatar(id, file, request);
   }
 
   @Post('/add-like/:articleId')
@@ -140,10 +161,23 @@ export class ArticleController {
   }
 
   @Patch('/:id')
-  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Method: updating article' })
   @ApiOkResponse({
     description: 'Article was changed',
+  })
+  @HttpCode(HttpStatus.OK)
+  async changeData(
+    @Body() data: UpdateArticleDto,
+    @Param('id') id: string,
+  ): Promise<UpdateResult | Article> {
+    return await this.articleService.change(data, id);
+  }
+
+  @Patch('/avatar/:id')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Method: updating article avatar' })
+  @ApiOkResponse({
+    description: 'Article avatar was changed',
   })
   @UseInterceptors(
     FileInterceptor('avatar', {
@@ -151,13 +185,12 @@ export class ArticleController {
     }),
   )
   @HttpCode(HttpStatus.OK)
-  async changeData(
+  async changeImage(
     @UploadedFile(FileUploadValidationForUpdate) file: Express.Multer.File,
-    @Body() data: UpdateArticleDto,
     @Param('id') id: string,
     @Req() request,
-  ): Promise<UpdateResult | Article> {
-    return await this.articleService.change(data, id, file, request);
+  ) {
+    return await this.articleService.updateAvatar(id, file, request);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)

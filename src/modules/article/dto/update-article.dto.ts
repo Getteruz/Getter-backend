@@ -1,15 +1,6 @@
-import { IsArray, IsOptional, IsString, isArray } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { BadRequestException } from '@nestjs/common';
 
-function parseTextToArray(name: string, value?: string) {
-  const arr = value ? JSON.parse(value) : '';
-  if (!isArray(arr)) {
-    throw new BadRequestException(`${name} should be array.`);
-  }
-  return arr;
-}
 class UpdateArticleDto {
   @ApiProperty({
     description: `title`,
@@ -33,17 +24,7 @@ class UpdateArticleDto {
   })
   @IsOptional()
   @IsArray()
-  @Transform(({ value }: { value: string }) => parseTextToArray('tags', value))
   readonly tags: string[];
-
-  @ApiProperty({
-    description: `Article image`,
-    example: 'file',
-    type: 'string',
-    format: 'binary',
-  })
-  @IsOptional()
-  avatar;
 
   @ApiProperty({
     description: `Category ID`,

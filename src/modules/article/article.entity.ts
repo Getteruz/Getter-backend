@@ -58,9 +58,6 @@ export class Article extends BaseEntity {
   @JoinColumn()
   user: User;
 
-  @OneToOne(() => FileEntity, (file) => file.article, {
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn()
-  avatar: FileEntity;
+  @OneToMany(() => FileEntity, (file) => file.article)
+  avatar: FileEntity[];
 }
