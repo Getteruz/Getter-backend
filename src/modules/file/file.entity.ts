@@ -4,6 +4,8 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
   OneToOne,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Article } from '../article/article.entity';
 
@@ -24,7 +26,11 @@ export class FileEntity extends BaseEntity {
   @OneToOne(() => User, (user) => user.avatar)
   user: User;
 
-  @OneToOne(() => Article, (article) => article.avatar)
+  @ManyToOne(() => Article, (article) => article.avatar, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
+  @JoinColumn()
   article: Article;
 
   @OneToOne(() => Website, (website) => website.avatar)
