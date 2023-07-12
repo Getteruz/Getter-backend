@@ -15,6 +15,9 @@ export class Category extends BaseEntity {
   @Column()
   title: string;
 
+  @Column({ nullable: true, type: 'varchar' })
+  type: string;
+
   @OneToMany(() => Article, (article) => article.category)
   articles: Article[];
 }

@@ -21,9 +21,7 @@ import {
 
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 import { CategoryService } from './category.service';
-import { Route } from '../../infra/shared/decorators/route.decorator';
 import { Query } from '@nestjs/common/decorators';
-import { PaginationDto } from '../../infra/shared/dto';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { userRoles } from '../../infra/shared/enum';
@@ -53,8 +51,8 @@ export class CategoryController {
   })
   @ApiForbiddenResponse({ description: 'Unauthorized Request' })
   @HttpCode(HttpStatus.OK)
-  async getData(@Route() route: string, @Query() query: PaginationDto) {
-    return await this.categoryService.getAll({ ...query, route });
+  async getData(@Query() { type }) {
+    return await this.categoryService.getAll(type);
   }
 
   @Roles(userRoles.ADMIN, userRoles.SUPER_ADMIN)

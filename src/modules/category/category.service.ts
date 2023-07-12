@@ -1,14 +1,10 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import {
-  IPaginationOptions,
-  Pagination,
-  paginate,
-} from 'nestjs-typeorm-paginate';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 import { Category } from './category.entity';
+import { CategoryEnum } from '../../infra/shared/enum';
 
 @Injectable()
 export class CategoryService {
@@ -17,11 +13,8 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async getAll(
-    options?: IPaginationOptions,
-    where?: FindOptionsWhere<Category>,
-  ): Promise<Pagination<Category>> {
-    return paginate<Category>(this.categoryRepository, options, {});
+  async getAll(type: CategoryEnum) {
+    return this.categoryRepository.find({ where: { type } });
   }
 
   async getById(id: string) {
@@ -52,7 +45,7 @@ export class CategoryService {
   }
 
   async create(value: CreateCategoryDto) {
-    const data = await this.categoryRepository.create(value);
+    const data = this.categoryRepository.create(value);
     return await this.categoryRepository.save(data);
   }
 }
